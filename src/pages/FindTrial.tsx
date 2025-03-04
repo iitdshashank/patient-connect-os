@@ -1,147 +1,13 @@
 
 import React, { useState } from 'react';
-import { 
-  Search, 
-  UserPlus, 
-  Upload, 
-  Database, 
-  ArrowRight,
-  CheckCircle2,
-  FilePlus2
-} from 'lucide-react';
-
-// Step component for patient onboarding process
-const OnboardingStep: React.FC<{
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-  active: boolean;
-  completed: boolean;
-  onClick: () => void;
-}> = ({ title, description, icon, active, completed, onClick }) => {
-  return (
-    <div 
-      className={`
-        p-5 rounded-xl border transition-all duration-300 cursor-pointer
-        ${active ? 'border-trialos-blue shadow-soft bg-white' : 'border-border bg-white/60'} 
-        ${completed ? 'border-green-500 bg-green-50/50' : ''}
-      `}
-      onClick={onClick}
-    >
-      <div className="flex items-start">
-        <div className={`
-          p-3 rounded-lg mr-4
-          ${completed ? 'bg-green-100 text-green-600' : active ? 'bg-trialos-blue/10 text-trialos-blue' : 'bg-gray-100 text-gray-500'}
-        `}>
-          {completed ? <CheckCircle2 size={24} /> : icon}
-        </div>
-        <div>
-          <h3 className={`font-semibold ${completed ? 'text-green-600' : active ? 'text-trialos-blue' : 'text-gray-700'}`}>
-            {title}
-          </h3>
-          <p className="text-sm text-gray-500 mt-1">{description}</p>
-          
-          {active && !completed && (
-            <button className="mt-4 btn-primary rounded-lg px-4 py-2 flex items-center text-sm">
-              <span>Continue</span>
-              <ArrowRight size={16} className="ml-2" />
-            </button>
-          )}
-          
-          {completed && (
-            <span className="text-sm text-green-600 font-medium mt-2 inline-block">Completed</span>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const PatientCard: React.FC<{
-  id: string;
-  name: string;
-  age: number;
-  diagnosis: string;
-  status: 'consented' | 'pending' | 'matched';
-  onClick: () => void;
-}> = ({ id, name, age, diagnosis, status, onClick }) => {
-  const getStatusBadge = () => {
-    switch (status) {
-      case 'consented':
-        return <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-600">Consented</span>;
-      case 'pending':
-        return <span className="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-600">Consent Pending</span>;
-      case 'matched':
-        return <span className="text-xs px-2 py-1 rounded-full bg-trialos-blue/20 text-trialos-blue">Trial Matched</span>;
-    }
-  };
-  
-  return (
-    <div 
-      className="glass-panel rounded-xl p-5 cursor-pointer card-hover"
-      onClick={onClick}
-    >
-      <div className="flex justify-between">
-        <div>
-          <p className="text-xs text-gray-500">Patient ID: {id}</p>
-          <h3 className="font-semibold text-gray-800 mt-1">{name}</h3>
-        </div>
-        {getStatusBadge()}
-      </div>
-      
-      <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
-        <div>
-          <p className="text-gray-500">Age</p>
-          <p className="font-medium">{age} years</p>
-        </div>
-        <div>
-          <p className="text-gray-500">Diagnosis</p>
-          <p className="font-medium">{diagnosis}</p>
-        </div>
-      </div>
-      
-      <div className="mt-4 pt-4 border-t border-border flex justify-end">
-        <button className="text-sm text-trialos-blue font-medium flex items-center">
-          <span>View Details</span>
-          <ArrowRight size={14} className="ml-1" />
-        </button>
-      </div>
-    </div>
-  );
-};
+import { Search, UserPlus } from 'lucide-react';
+import PatientList, { Patient } from '../components/patients/PatientList';
+import PatientForm from '../components/patients/PatientForm';
+import EConsentForm from '../components/patients/EConsentForm';
+import TrialMatching from '../components/trials/TrialMatching';
 
 const FindTrial: React.FC = () => {
-  const [activeStep, setActiveStep] = useState<number>(0);
-  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
-  
-  const handleStepClick = (step: number) => {
-    setActiveStep(step);
-  };
-  
-  const onboardingSteps = [
-    {
-      title: "Add Patient",
-      description: "Add a new patient to your system",
-      icon: <UserPlus size={24} />
-    },
-    {
-      title: "Import from EHR",
-      description: "Connect to your EHR system to import patient data",
-      icon: <Database size={24} />
-    },
-    {
-      title: "Upload Documents",
-      description: "Upload patient documents and reports",
-      icon: <Upload size={24} />
-    },
-    {
-      title: "Create Profile",
-      description: "Complete the patient profile for matching",
-      icon: <FilePlus2 size={24} />
-    }
-  ];
-  
-  const patients = [
+  const [patients, setPatients] = useState<Patient[]>([
     {
       id: "PT-12845",
       name: "Sarah Johnson",
@@ -170,7 +36,58 @@ const FindTrial: React.FC = () => {
       diagnosis: "Ovarian Cancer",
       status: 'consented' as const
     }
-  ];
+  ]);
+  
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentView, setCurrentView] = useState<'list' | 'add' | 'consent' | 'match'>('list');
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+  
+  const handleAddPatient = () => {
+    setCurrentView('add');
+  };
+  
+  const handlePatientAdded = (patientData: any) => {
+    const newPatient: Patient = {
+      id: patientData.id,
+      name: patientData.name,
+      age: patientData.age,
+      diagnosis: patientData.primaryDiagnosis,
+      status: 'pending' as const
+    };
+    
+    setPatients([newPatient, ...patients]);
+    setSelectedPatient(newPatient);
+    setCurrentView('consent');
+  };
+  
+  const handleSelectPatient = (patient: Patient) => {
+    setSelectedPatient(patient);
+    if (patient.status === 'pending') {
+      setCurrentView('consent');
+    } else if (patient.status === 'consented') {
+      setCurrentView('match');
+    } else {
+      // If already matched, could show the match results again
+      setCurrentView('match');
+    }
+  };
+  
+  const handleConsentComplete = (patientId: string) => {
+    // Update patient status to consented
+    const updatedPatients = patients.map(patient => 
+      patient.id === patientId 
+        ? { ...patient, status: 'consented' as const } 
+        : patient
+    );
+    
+    setPatients(updatedPatients);
+    setSelectedPatient(prevPatient => 
+      prevPatient && prevPatient.id === patientId 
+        ? { ...prevPatient, status: 'consented' as const } 
+        : prevPatient
+    );
+    setCurrentView('match');
+  };
   
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
@@ -183,105 +100,57 @@ const FindTrial: React.FC = () => {
         <p className="text-gray-600 mt-2">Match your patients with suitable clinical trials using our TrialLM AI technology</p>
       </div>
       
-      {/* Patient list and onboarding */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left panel - Patient list */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold text-gray-800">Your Patients</h2>
-            <div className="flex space-x-2">
-              <div className="relative">
-                <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input 
-                  type="text" 
-                  placeholder="Search patients..." 
-                  className="pl-10 pr-4 py-2 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-trialos-blue/20 focus:border-trialos-blue"
-                />
-              </div>
-              <button className="btn-primary rounded-lg px-4 py-2 flex items-center">
-                <UserPlus size={18} className="mr-2" />
-                Add Patient
-              </button>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {patients.map((patient) => (
-              <PatientCard
-                key={patient.id}
-                {...patient}
-                onClick={() => {}}
-              />
-            ))}
-          </div>
-        </div>
-        
-        {/* Right panel - Patient onboarding */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-gray-800">Patient Onboarding</h2>
-          <p className="text-sm text-gray-600">Follow these steps to onboard a new patient for trial matching</p>
-          
-          <div className="space-y-3 mt-6">
-            {onboardingSteps.map((step, index) => (
-              <OnboardingStep
-                key={index}
-                title={step.title}
-                description={step.description}
-                icon={step.icon}
-                active={activeStep === index}
-                completed={completedSteps.includes(index)}
-                onClick={() => handleStepClick(index)}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-      
-      {/* Trial matching section */}
+      {/* Main content */}
       <div className="glass-panel rounded-xl p-6 border-t-4 border-trialos-blue">
-        <div className="flex items-start mb-6">
-          <div className="p-3 rounded-lg bg-trialos-blue/10 text-trialos-blue mr-4">
-            <Search size={24} />
-          </div>
-          <div>
-            <h2 className="text-xl font-semibold text-gray-800">Advanced Trial Matching</h2>
-            <p className="text-gray-600 mt-1">
-              Our TrialLM algorithm analyzes patient data to find the most suitable clinical trials.
-            </p>
-          </div>
-        </div>
+        {currentView === 'list' && (
+          <PatientList 
+            patients={patients} 
+            onSelectPatient={handleSelectPatient}
+            onAddNewPatient={handleAddPatient}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+          />
+        )}
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <div className="col-span-2 bg-white/80 rounded-lg p-5 border border-border">
-            <h3 className="font-medium text-trialos-blue mb-3">How It Works</h3>
-            <ol className="space-y-3">
-              {[
-                "Select a patient with complete profile data and consent",
-                "Our TrialLM engine analyzes the patient data against trial criteria",
-                "Review matching trials ranked by suitability and eligibility"
-              ].map((step, index) => (
-                <li key={index} className="flex items-start">
-                  <div className="w-6 h-6 rounded-full bg-trialos-blue/10 text-trialos-blue flex items-center justify-center text-sm font-medium mr-3 flex-shrink-0">
-                    {index + 1}
-                  </div>
-                  <span className="text-gray-700">{step}</span>
-                </li>
-              ))}
-            </ol>
-          </div>
-          
-          <div className="bg-trialos-blue text-white rounded-lg p-5 flex flex-col justify-between">
-            <div>
-              <h3 className="font-medium mb-3">Ready to Match?</h3>
-              <p className="text-sm text-white/80 mb-4">
-                Select a consented patient to start matching with appropriate clinical trials
-              </p>
-            </div>
-            <button className="bg-white text-trialos-blue rounded-lg px-4 py-2 font-medium hover:bg-trialos-light transition-colors">
-              Start Matching
+        {currentView === 'add' && (
+          <>
+            <button 
+              onClick={() => setCurrentView('list')}
+              className="mb-6 text-gray-500 hover:text-gray-700 flex items-center"
+            >
+              <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Patient List
             </button>
-          </div>
-        </div>
+            <PatientForm onComplete={handlePatientAdded} />
+          </>
+        )}
+        
+        {currentView === 'consent' && selectedPatient && (
+          <>
+            <button 
+              onClick={() => setCurrentView('list')}
+              className="mb-6 text-gray-500 hover:text-gray-700 flex items-center"
+            >
+              <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Patient List
+            </button>
+            <EConsentForm 
+              patient={selectedPatient} 
+              onConsentComplete={handleConsentComplete} 
+            />
+          </>
+        )}
+        
+        {currentView === 'match' && selectedPatient && (
+          <TrialMatching 
+            patient={selectedPatient}
+            onBack={() => setCurrentView('list')}
+          />
+        )}
       </div>
     </div>
   );
