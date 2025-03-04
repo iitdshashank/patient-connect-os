@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { 
   UserCircle,
   CalendarIcon,
-  FileMedical,
+  FileType,
   Stethoscope,
   Syringe,
   Activity,
@@ -251,7 +250,7 @@ const PatientForm: React.FC<PatientFormProps> = ({ onComplete }) => {
         {currentStep === 2 && (
           <div className="space-y-4 animate-fadeIn">
             <div className="flex items-center gap-2 mb-4 text-trialos-blue">
-              <FileMedical size={24} />
+              <FileType size={24} />
               <h3 className="text-lg font-medium">Diagnosis Details</h3>
             </div>
             

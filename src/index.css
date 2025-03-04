@@ -111,15 +111,36 @@
   }
 
   .btn-primary {
-    @apply bg-trialos-blue text-white hover:bg-trialos-dark transition-colors duration-300 font-medium;
+    @apply bg-trialos-blue text-white hover:bg-trialos-dark transition-colors duration-300 font-medium shadow-sm hover:shadow-md;
   }
   
   .btn-secondary {
-    @apply bg-trialos-teal text-white hover:bg-trialos-teal/90 transition-colors duration-300 font-medium;
+    @apply bg-trialos-teal text-white hover:bg-trialos-teal/90 transition-colors duration-300 font-medium shadow-sm hover:shadow-md;
   }
   
   .btn-outline {
     @apply border border-trialos-blue text-trialos-blue hover:bg-trialos-blue/10 transition-colors duration-300 font-medium;
+  }
+  
+  /* Enhanced components with premium styling */
+  .premium-card {
+    @apply bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 p-5;
+  }
+  
+  .premium-input {
+    @apply px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-trialos-blue/20 focus:border-trialos-blue transition-all duration-200;
+  }
+  
+  .premium-button {
+    @apply rounded-lg px-5 py-2.5 font-medium shadow-sm transition-all duration-200;
+  }
+  
+  .animate-fadeIn {
+    @apply animate-fade-in;
+  }
+  
+  .headline-gradient {
+    @apply bg-gradient-to-r from-trialos-blue via-blue-600 to-trialos-teal bg-clip-text text-transparent;
   }
 }
 
@@ -141,4 +162,28 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 51, 160, 0.5);
+}
+
+/* Premium animations */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 rgba(0, 51, 160, 0);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(0, 51, 160, 0.3);
+  }
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s infinite;
+}
+
+/* Glass morphism effects */
+.shadow-glass {
+  box-shadow: 0 8px 32px rgba(0, 51, 160, 0.08);
+}
+
+/* Medical pattern background */
+.medical-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230033a0' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
