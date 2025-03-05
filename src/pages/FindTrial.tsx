@@ -1,10 +1,14 @@
 
 import React, { useState } from 'react';
-import { Search, UserPlus, Sparkles } from 'lucide-react';
+import { Search, UserPlus, Sparkles, ArrowRight } from 'lucide-react';
 import PatientList, { Patient } from '../components/patients/PatientList';
 import PatientForm from '../components/patients/PatientForm';
 import EConsentForm from '../components/patients/EConsentForm';
 import TrialMatching from '../components/trials/TrialMatching';
+import EhrImport from '../components/patients/EhrImport';
+import PatientAddOptions from '../components/patients/PatientAddOptions';
+import PatientProfileForMatching from '../components/patients/PatientProfileForMatching';
+import ProcessingAnimation from '../components/trials/ProcessingAnimation';
 
 const FindTrial: React.FC = () => {
   const [patients, setPatients] = useState<Patient[]>([
@@ -39,11 +43,20 @@ const FindTrial: React.FC = () => {
   ]);
   
   const [searchQuery, setSearchQuery] = useState('');
-  const [currentView, setCurrentView] = useState<'list' | 'add' | 'consent' | 'match'>('list');
+  const [currentView, setCurrentView] = useState<'list' | 'addOptions' | 'form' | 'ehr' | 'consent' | 'match' | 'profile' | 'processing'>('list');
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+  const [consentSent, setConsentSent] = useState(false);
   
   const handleAddPatient = () => {
-    setCurrentView('add');
+    setCurrentView('addOptions');
+  };
+
+  const handleFormOption = () => {
+    setCurrentView('form');
+  };
+
+  const handleEhrOption = () => {
+    setCurrentView('ehr');
   };
   
   const handlePatientAdded = (patientData: any) => {
@@ -65,7 +78,7 @@ const FindTrial: React.FC = () => {
     if (patient.status === 'pending') {
       setCurrentView('consent');
     } else if (patient.status === 'consented') {
-      setCurrentView('match');
+      setCurrentView('profile');
     } else {
       // If already matched, could show the match results again
       setCurrentView('match');
@@ -86,7 +99,26 @@ const FindTrial: React.FC = () => {
         ? { ...prevPatient, status: 'consented' as const } 
         : prevPatient
     );
-    setCurrentView('match');
+    setCurrentView('list');
+    setConsentSent(true);
+  };
+
+  const startTrialMatching = () => {
+    setCurrentView('processing');
+    
+    // Simulate processing time before showing results
+    setTimeout(() => {
+      setCurrentView('match');
+    }, 8000);
+  };
+
+  const startTrialMatchmaking = () => {
+    if (selectedPatient) {
+      setCurrentView('profile');
+    } else {
+      // If no patient is selected, show the list to select one
+      setCurrentView('list');
+    }
   };
   
   return (
@@ -101,7 +133,49 @@ const FindTrial: React.FC = () => {
           Match your patients with suitable clinical trials using our proprietary TrialLM™ 
           technology, powered by advanced AI and real-time eligibility assessment.
         </p>
+        
+        {currentView === 'list' && !selectedPatient && (
+          <button
+            onClick={startTrialMatchmaking}
+            className="mt-4 btn-primary rounded-lg px-6 py-3 flex items-center"
+          >
+            <Sparkles size={18} className="mr-2" />
+            <span>Start Trial Matchmaking</span>
+            <ArrowRight size={18} className="ml-2" />
+          </button>
+        )}
       </div>
+      
+      {/* Consent sent notification */}
+      {consentSent && (
+        <div className="bg-green-50 border-l-4 border-green-400 p-4 rounded-md mb-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <p className="text-sm text-green-700">
+                Consent request has been sent successfully to the patient.
+              </p>
+            </div>
+            <div className="ml-auto pl-3">
+              <div className="-mx-1.5 -my-1.5">
+                <button
+                  onClick={() => setConsentSent(false)}
+                  className="inline-flex bg-green-50 p-1.5 text-green-500 rounded-md hover:bg-green-100 focus:outline-none"
+                >
+                  <span className="sr-only">Dismiss</span>
+                  <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Main content */}
       <div className="glass-panel rounded-xl p-6 border-t-4 border-trialos-blue shadow-glass">
@@ -115,7 +189,7 @@ const FindTrial: React.FC = () => {
           />
         )}
         
-        {currentView === 'add' && (
+        {currentView === 'addOptions' && (
           <>
             <button 
               onClick={() => setCurrentView('list')}
@@ -126,7 +200,40 @@ const FindTrial: React.FC = () => {
               </svg>
               Back to Patient List
             </button>
+            <PatientAddOptions 
+              onSelectForm={handleFormOption} 
+              onSelectEhr={handleEhrOption} 
+            />
+          </>
+        )}
+        
+        {currentView === 'form' && (
+          <>
+            <button 
+              onClick={() => setCurrentView('addOptions')}
+              className="mb-6 text-gray-500 hover:text-gray-700 flex items-center"
+            >
+              <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Add Options
+            </button>
             <PatientForm onComplete={handlePatientAdded} />
+          </>
+        )}
+
+        {currentView === 'ehr' && (
+          <>
+            <button 
+              onClick={() => setCurrentView('addOptions')}
+              className="mb-6 text-gray-500 hover:text-gray-700 flex items-center"
+            >
+              <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Add Options
+            </button>
+            <EhrImport onPatientSelected={handlePatientAdded} />
           </>
         )}
         
@@ -146,6 +253,18 @@ const FindTrial: React.FC = () => {
               onConsentComplete={handleConsentComplete} 
             />
           </>
+        )}
+
+        {currentView === 'profile' && selectedPatient && (
+          <PatientProfileForMatching 
+            patient={selectedPatient}
+            onBack={() => setCurrentView('list')}
+            onProceed={startTrialMatching}
+          />
+        )}
+
+        {currentView === 'processing' && (
+          <ProcessingAnimation />
         )}
         
         {currentView === 'match' && selectedPatient && (
