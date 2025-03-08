@@ -9,6 +9,7 @@ import EhrImport from '../components/patients/EhrImport';
 import PatientAddOptions from '../components/patients/PatientAddOptions';
 import PatientProfileForMatching from '../components/patients/PatientProfileForMatching';
 import ProcessingAnimation from '../components/trials/ProcessingAnimation';
+import PatientSelectionList from '../components/patients/PatientSelectionList';
 
 const FindTrial: React.FC = () => {
   const [patients, setPatients] = useState<Patient[]>([
@@ -43,9 +44,10 @@ const FindTrial: React.FC = () => {
   ]);
   
   const [searchQuery, setSearchQuery] = useState('');
-  const [currentView, setCurrentView] = useState<'list' | 'addOptions' | 'form' | 'ehr' | 'consent' | 'match' | 'profile' | 'processing'>('list');
+  const [currentView, setCurrentView] = useState<'list' | 'addOptions' | 'form' | 'ehr' | 'consent' | 'match' | 'profile' | 'processing' | 'selectPatient'>('list');
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [consentSent, setConsentSent] = useState(false);
+  const [showViewResultsButton, setShowViewResultsButton] = useState(false);
   
   const handleAddPatient = () => {
     setCurrentView('addOptions');
@@ -106,19 +108,24 @@ const FindTrial: React.FC = () => {
   const startTrialMatching = () => {
     setCurrentView('processing');
     
-    // Simulate processing time before showing results
+    // Simulate processing time before showing view results button
     setTimeout(() => {
-      setCurrentView('match');
-    }, 8000);
+      setShowViewResultsButton(true);
+    }, 5000);
+  };
+
+  const viewMatchResults = () => {
+    setCurrentView('match');
+    setShowViewResultsButton(false);
   };
 
   const startTrialMatchmaking = () => {
-    if (selectedPatient) {
-      setCurrentView('profile');
-    } else {
-      // If no patient is selected, show the list to select one
-      setCurrentView('list');
-    }
+    setCurrentView('selectPatient');
+  };
+
+  const handlePatientSelection = (patient: Patient) => {
+    setSelectedPatient(patient);
+    setCurrentView('profile');
   };
   
   return (
@@ -186,6 +193,14 @@ const FindTrial: React.FC = () => {
             onAddNewPatient={handleAddPatient}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
+          />
+        )}
+        
+        {currentView === 'selectPatient' && (
+          <PatientSelectionList
+            patients={patients.filter(p => p.status === 'consented')}
+            onSelectPatient={handlePatientSelection}
+            onBack={() => setCurrentView('list')}
           />
         )}
         
@@ -258,13 +273,27 @@ const FindTrial: React.FC = () => {
         {currentView === 'profile' && selectedPatient && (
           <PatientProfileForMatching 
             patient={selectedPatient}
-            onBack={() => setCurrentView('list')}
+            onBack={() => setCurrentView('selectPatient')}
             onProceed={startTrialMatching}
           />
         )}
 
         {currentView === 'processing' && (
-          <ProcessingAnimation />
+          <div className="relative">
+            <ProcessingAnimation />
+            
+            {showViewResultsButton && (
+              <div className="flex justify-center mt-8 animate-fade-in">
+                <button
+                  onClick={viewMatchResults}
+                  className="btn-primary rounded-lg px-8 py-3 text-lg flex items-center"
+                >
+                  <span>View Results</span>
+                  <ArrowRight size={20} className="ml-2" />
+                </button>
+              </div>
+            )}
+          </div>
         )}
         
         {currentView === 'match' && selectedPatient && (

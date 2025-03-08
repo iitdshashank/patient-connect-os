@@ -8,7 +8,15 @@ import {
   CheckSquare, 
   Square, 
   ArrowRight,
-  AlertTriangle
+  AlertTriangle,
+  Clock,
+  FileType,
+  Calendar,
+  CircleCheck,
+  FileMedical,
+  TestTube,
+  Dna,
+  StickyNote
 } from 'lucide-react';
 import { Patient } from './PatientList';
 
@@ -16,6 +24,16 @@ interface PatientProfileForMatchingProps {
   patient: Patient;
   onBack: () => void;
   onProceed: () => void;
+}
+
+interface ClinicalDocument {
+  id: string;
+  type: 'note' | 'test' | 'procedure' | 'medication' | 'imaging';
+  title: string;
+  description: string;
+  date: string;
+  doctor: string;
+  content?: string;
 }
 
 const PatientProfileForMatching: React.FC<PatientProfileForMatchingProps> = ({ patient, onBack, onProceed }) => {
@@ -26,7 +44,7 @@ const PatientProfileForMatching: React.FC<PatientProfileForMatchingProps> = ({ p
     'treatments': false,
     'labs': false,
     'genomics': false,
-    'notes': false
+    'timeline': true
   });
   
   const [selectedData, setSelectedData] = useState<Record<string, boolean>>({
@@ -34,11 +52,122 @@ const PatientProfileForMatching: React.FC<PatientProfileForMatchingProps> = ({ p
     'diagnosis': true,
     'treatments': true,
     'labs': true,
-    'genomics': true,
-    'clinicalNote1': false,
-    'clinicalNote2': true,
-    'clinicalNote3': false
+    'genomics': true
   });
+
+  // Mock timeline of clinical documents
+  const [clinicalDocuments, setClinicalDocuments] = useState<ClinicalDocument[]>([
+    {
+      id: "doc-001",
+      type: "note",
+      title: "Initial Oncology Consultation",
+      description: "First visit with oncologist Dr. Sarah Miller",
+      date: "2023-08-10",
+      doctor: "Dr. Sarah Miller",
+      content: "Patient presents with newly diagnosed breast cancer. Planning for biopsy and staging workup."
+    },
+    {
+      id: "doc-002",
+      type: "test",
+      title: "Diagnostic Mammogram",
+      description: "Bilateral diagnostic mammogram with 3D tomosynthesis",
+      date: "2023-08-12",
+      doctor: "Dr. James Wilson",
+      content: "2.5 cm mass in upper outer quadrant of right breast, suspicious for malignancy (BIRADS 5)."
+    },
+    {
+      id: "doc-003",
+      type: "procedure",
+      title: "Breast Biopsy",
+      description: "Ultrasound-guided core needle biopsy of right breast mass",
+      date: "2023-08-15",
+      doctor: "Dr. Lisa Chen"
+    },
+    {
+      id: "doc-004",
+      type: "test",
+      title: "Pathology Report",
+      description: "Biopsy pathology results",
+      date: "2023-08-18",
+      doctor: "Dr. Michael Patel",
+      content: "Invasive ductal carcinoma, Grade 2, ER+/PR+/HER2+."
+    },
+    {
+      id: "doc-005",
+      type: "imaging",
+      title: "CT Chest/Abdomen/Pelvis",
+      description: "Staging CT scan",
+      date: "2023-08-25",
+      doctor: "Dr. Robert Johnson",
+      content: "No evidence of metastatic disease. Small right axillary lymph nodes, likely reactive."
+    },
+    {
+      id: "doc-006",
+      type: "note",
+      title: "Surgical Oncology Consultation",
+      description: "Consultation for surgical planning",
+      date: "2023-08-30",
+      doctor: "Dr. Jennifer Lee",
+      content: "Discussed surgical options. Patient prefers breast conservation if possible. Planning for lumpectomy with sentinel lymph node biopsy."
+    },
+    {
+      id: "doc-007",
+      type: "procedure",
+      title: "Lumpectomy",
+      description: "Right breast lumpectomy with sentinel lymph node biopsy",
+      date: "2023-09-10",
+      doctor: "Dr. Jennifer Lee"
+    },
+    {
+      id: "doc-008",
+      type: "note",
+      title: "Medical Oncology Follow-up",
+      description: "Post-surgical follow-up and treatment planning",
+      date: "2023-09-20",
+      doctor: "Dr. Sarah Miller",
+      content: "Surgical pathology confirms Stage II breast cancer with negative sentinel nodes. Recommending adjuvant chemotherapy followed by radiation and hormonal therapy."
+    },
+    {
+      id: "doc-009",
+      type: "medication",
+      title: "Chemotherapy Initiation",
+      description: "First cycle of TC chemotherapy",
+      date: "2023-10-05",
+      doctor: "Dr. Sarah Miller"
+    },
+    {
+      id: "doc-010",
+      type: "test",
+      title: "Cardiac Function Assessment",
+      description: "MUGA scan for cardiac monitoring",
+      date: "2023-11-10",
+      doctor: "Dr. David Brown",
+      content: "Left ventricular ejection fraction 62%, within normal limits."
+    },
+    {
+      id: "doc-011",
+      type: "note",
+      title: "Chemotherapy Completion Note",
+      description: "Final cycle of chemotherapy completed",
+      date: "2023-12-15",
+      doctor: "Dr. Sarah Miller",
+      content: "Patient completed 4 cycles of TC chemotherapy with minimal side effects. Preparing for radiation therapy."
+    },
+    {
+      id: "doc-012",
+      type: "note",
+      title: "Radiation Oncology Consultation",
+      description: "Radiation therapy planning",
+      date: "2023-12-20",
+      doctor: "Dr. Emily Taylor",
+      content: "Planning for 30 sessions of radiation therapy to the right breast."
+    }
+  ]);
+  
+  // Add selected state to each document
+  const [selectedDocuments, setSelectedDocuments] = useState<Record<string, boolean>>(
+    clinicalDocuments.reduce((acc, doc) => ({ ...acc, [doc.id]: true }), {})
+  );
   
   const toggleSection = (section: string) => {
     setExpandedSections({
@@ -54,14 +183,22 @@ const PatientProfileForMatching: React.FC<PatientProfileForMatchingProps> = ({ p
     });
   };
   
+  const toggleDocumentSelection = (docId: string) => {
+    setSelectedDocuments({
+      ...selectedDocuments,
+      [docId]: !selectedDocuments[docId]
+    });
+  };
+  
   const handleProceed = () => {
     // Check if at least some data is selected
-    const hasSelection = Object.values(selectedData).some(value => value);
+    const hasSelection = Object.values(selectedData).some(value => value) || 
+                          Object.values(selectedDocuments).some(value => value);
     
     if (!hasSelection) {
       toast({
         title: "Selection Required",
-        description: "Please select at least one data category for trial matching.",
+        description: "Please select at least one data category or document for trial matching.",
         variant: "destructive"
       });
       return;
@@ -107,27 +244,7 @@ const PatientProfileForMatching: React.FC<PatientProfileForMatchingProps> = ({ p
       mutations: "PIK3CA mutation positive",
       variantsOfUnknownSignificance: "PALB2 c.2748+1G>T",
       tumorMutationalBurden: "Low (3 mutations/Mb)"
-    },
-    clinicalNotes: [
-      {
-        id: "clinicalNote1",
-        date: "2023-11-15",
-        author: "Dr. Smith, Oncology",
-        content: "Patient is responding well to hormone therapy. No significant side effects reported. Next follow-up scheduled in 3 months."
-      },
-      {
-        id: "clinicalNote2",
-        date: "2023-10-05",
-        author: "Dr. Johnson, Radiation Oncology",
-        content: "Radiotherapy initiated for right breast. Treatment plan: 30 sessions of 2 Gy each. Patient tolerated first session well with minimal skin reaction."
-      },
-      {
-        id: "clinicalNote3",
-        date: "2023-09-15",
-        author: "Dr. Miller, Surgical Oncology",
-        content: "Post-surgical follow-up shows good healing. Pathology confirmed clear margins. Sentinel lymph node negative for metastasis. Patient being referred to medical oncology for adjuvant therapy discussion."
-      }
-    ]
+    }
   };
   
   // Section component for collapsible data sections
@@ -138,15 +255,17 @@ const PatientProfileForMatching: React.FC<PatientProfileForMatchingProps> = ({ p
         onClick={() => toggleSection(id)}
       >
         <h3 className="font-medium text-gray-800 flex items-center">
-          <input
-            type="checkbox"
-            checked={selectedData[id] || false}
-            onChange={(e) => {
-              e.stopPropagation();
-              toggleDataSelection(id);
-            }}
-            className="mr-3 h-4 w-4 rounded border-gray-300 text-trialos-blue focus:ring-trialos-blue"
-          />
+          {id !== 'timeline' && (
+            <input
+              type="checkbox"
+              checked={selectedData[id] || false}
+              onChange={(e) => {
+                e.stopPropagation();
+                toggleDataSelection(id);
+              }}
+              className="mr-3 h-4 w-4 rounded border-gray-300 text-trialos-blue focus:ring-trialos-blue"
+            />
+          )}
           {title}
         </h3>
         <span>
@@ -166,31 +285,23 @@ const PatientProfileForMatching: React.FC<PatientProfileForMatchingProps> = ({ p
     </div>
   );
   
-  // Function to render clinical note
-  const renderClinicalNote = (note: any) => (
-    <div key={note.id} className="mb-3 last:mb-0 bg-white p-3 rounded-lg border border-gray-200">
-      <div className="flex items-start justify-between">
-        <div className="flex-grow">
-          <div className="flex items-center">
-            <span className="text-xs text-gray-500">{note.date}</span>
-            <span className="mx-2">•</span>
-            <span className="text-xs text-gray-500">{note.author}</span>
-          </div>
-          <p className="text-sm text-gray-700 mt-1 line-clamp-2">{note.content}</p>
-        </div>
-        <div onClick={(e) => {
-          e.stopPropagation();
-          toggleDataSelection(note.id);
-        }}>
-          {selectedData[note.id] ? (
-            <CheckSquare size={18} className="text-trialos-blue cursor-pointer" />
-          ) : (
-            <Square size={18} className="text-gray-400 cursor-pointer" />
-          )}
-        </div>
-      </div>
-    </div>
-  );
+  // Get document icon based on type
+  const getDocumentIcon = (type: string) => {
+    switch(type) {
+      case 'note':
+        return <StickyNote size={16} className="text-blue-500" />;
+      case 'test':
+        return <TestTube size={16} className="text-green-500" />;
+      case 'procedure':
+        return <FileMedical size={16} className="text-red-500" />;
+      case 'medication':
+        return <FileType size={16} className="text-purple-500" />;
+      case 'imaging':
+        return <FileType size={16} className="text-amber-500" />;
+      default:
+        return <FileText size={16} className="text-gray-500" />;
+    }
+  };
   
   return (
     <div className="space-y-6">
@@ -202,7 +313,7 @@ const PatientProfileForMatching: React.FC<PatientProfileForMatchingProps> = ({ p
           <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-          Back to Patients
+          Back to Patient Selection
         </button>
         <div className="flex items-center">
           <div className="px-3 py-1 rounded-full border border-trialos-blue/30 bg-trialos-blue/5 text-trialos-blue text-xs font-medium">
@@ -343,9 +454,50 @@ const PatientProfileForMatching: React.FC<PatientProfileForMatchingProps> = ({ p
           </div>
         </Section>
         
-        <Section title="Clinical Notes" id="notes">
-          <div className="space-y-2">
-            {patientData.clinicalNotes.map(renderClinicalNote)}
+        <Section title="Clinical Timeline Documents" id="timeline">
+          <div className="relative pl-6 border-l-2 border-gray-200">
+            {clinicalDocuments.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map((document, index) => (
+              <div key={document.id} className="mb-6 relative">
+                {/* Timeline dot */}
+                <div className="absolute -left-[27px] w-4 h-4 rounded-full bg-trialos-blue/20 border-2 border-trialos-blue flex items-center justify-center">
+                  {getDocumentIcon(document.type)}
+                </div>
+                
+                {/* Document card */}
+                <div className="bg-white border border-gray-200 rounded-lg p-4 ml-2 hover:border-trialos-blue/50 hover:shadow-sm transition-all">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-grow">
+                      <div className="flex items-center text-xs text-gray-500 mb-1">
+                        <Calendar size={12} className="mr-1" />
+                        <span>{document.date}</span>
+                        <span className="mx-1">•</span>
+                        <span>{document.doctor}</span>
+                      </div>
+                      
+                      <h4 className="font-medium text-gray-800">{document.title}</h4>
+                      <p className="text-sm text-gray-600 mt-1">{document.description}</p>
+                      
+                      {document.content && (
+                        <div className="mt-2 p-2 bg-gray-50 rounded text-sm text-gray-700 border-l-2 border-gray-300">
+                          {document.content}
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div 
+                      className="ml-3 cursor-pointer"
+                      onClick={() => toggleDocumentSelection(document.id)}
+                    >
+                      {selectedDocuments[document.id] ? (
+                        <CheckSquare size={18} className="text-trialos-blue" />
+                      ) : (
+                        <Square size={18} className="text-gray-400" />
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </Section>
       </div>
@@ -355,7 +507,7 @@ const PatientProfileForMatching: React.FC<PatientProfileForMatchingProps> = ({ p
           onClick={handleProceed}
           className="btn-primary rounded-lg px-6 py-2 flex items-center"
         >
-          <span>Proceed to Trial Matching</span>
+          <span>Initiate Search</span>
           <ArrowRight size={16} className="ml-2" />
         </button>
       </div>

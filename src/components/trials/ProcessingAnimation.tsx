@@ -22,7 +22,7 @@ const ProcessingAnimation: React.FC = () => {
         }
         return prevStep;
       });
-    }, 2000);
+    }, 1250); // Faster progression to complete in ~5 seconds
     
     return () => clearInterval(timer);
   }, []);
