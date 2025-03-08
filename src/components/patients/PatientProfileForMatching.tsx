@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { 
@@ -13,7 +12,7 @@ import {
   FileType,
   Calendar,
   CircleCheck,
-  FileMedical,
+  FileEdit,
   TestTube,
   Dna,
   StickyNote
@@ -55,7 +54,6 @@ const PatientProfileForMatching: React.FC<PatientProfileForMatchingProps> = ({ p
     'genomics': true
   });
 
-  // Mock timeline of clinical documents
   const [clinicalDocuments, setClinicalDocuments] = useState<ClinicalDocument[]>([
     {
       id: "doc-001",
@@ -164,7 +162,6 @@ const PatientProfileForMatching: React.FC<PatientProfileForMatchingProps> = ({ p
     }
   ]);
   
-  // Add selected state to each document
   const [selectedDocuments, setSelectedDocuments] = useState<Record<string, boolean>>(
     clinicalDocuments.reduce((acc, doc) => ({ ...acc, [doc.id]: true }), {})
   );
@@ -191,7 +188,6 @@ const PatientProfileForMatching: React.FC<PatientProfileForMatchingProps> = ({ p
   };
   
   const handleProceed = () => {
-    // Check if at least some data is selected
     const hasSelection = Object.values(selectedData).some(value => value) || 
                           Object.values(selectedDocuments).some(value => value);
     
@@ -204,11 +200,9 @@ const PatientProfileForMatching: React.FC<PatientProfileForMatchingProps> = ({ p
       return;
     }
     
-    // Proceed to trial matching
     onProceed();
   };
   
-  // Mock patient data
   const patientData = {
     demographics: {
       age: patient.age,
@@ -247,7 +241,6 @@ const PatientProfileForMatching: React.FC<PatientProfileForMatchingProps> = ({ p
     }
   };
   
-  // Section component for collapsible data sections
   const Section = ({ title, id, children }: { title: string; id: string; children: React.ReactNode }) => (
     <div className="mb-4 border border-gray-200 rounded-lg overflow-hidden">
       <div 
@@ -285,7 +278,6 @@ const PatientProfileForMatching: React.FC<PatientProfileForMatchingProps> = ({ p
     </div>
   );
   
-  // Get document icon based on type
   const getDocumentIcon = (type: string) => {
     switch(type) {
       case 'note':
@@ -293,7 +285,7 @@ const PatientProfileForMatching: React.FC<PatientProfileForMatchingProps> = ({ p
       case 'test':
         return <TestTube size={16} className="text-green-500" />;
       case 'procedure':
-        return <FileMedical size={16} className="text-red-500" />;
+        return <FileEdit size={16} className="text-red-500" />;
       case 'medication':
         return <FileType size={16} className="text-purple-500" />;
       case 'imaging':
@@ -458,12 +450,10 @@ const PatientProfileForMatching: React.FC<PatientProfileForMatchingProps> = ({ p
           <div className="relative pl-6 border-l-2 border-gray-200">
             {clinicalDocuments.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).map((document, index) => (
               <div key={document.id} className="mb-6 relative">
-                {/* Timeline dot */}
                 <div className="absolute -left-[27px] w-4 h-4 rounded-full bg-trialos-blue/20 border-2 border-trialos-blue flex items-center justify-center">
                   {getDocumentIcon(document.type)}
                 </div>
                 
-                {/* Document card */}
                 <div className="bg-white border border-gray-200 rounded-lg p-4 ml-2 hover:border-trialos-blue/50 hover:shadow-sm transition-all">
                   <div className="flex items-start justify-between">
                     <div className="flex-grow">
