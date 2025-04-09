@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Search, UserPlus, Sparkles, ArrowRight } from 'lucide-react';
+import { Search, UserPlus, Sparkles, ArrowRight, Upload, FileText, MessageSquare } from 'lucide-react';
 import PatientList, { Patient } from '../components/patients/PatientList';
 import PatientForm from '../components/patients/PatientForm';
 import EConsentForm from '../components/patients/EConsentForm';
@@ -10,6 +9,9 @@ import PatientAddOptions from '../components/patients/PatientAddOptions';
 import PatientProfileForMatching from '../components/patients/PatientProfileForMatching';
 import ProcessingAnimation from '../components/trials/ProcessingAnimation';
 import PatientSelectionList from '../components/patients/PatientSelectionList';
+import QuickEntryForm from '../components/patients/QuickEntryForm';
+import DocUploadForm from '../components/patients/DocUploadForm';
+import TrialMatchingFlowchart from '../components/trials/TrialMatchingFlowchart';
 
 const FindTrial: React.FC = () => {
   const [patients, setPatients] = useState<Patient[]>([
@@ -44,7 +46,7 @@ const FindTrial: React.FC = () => {
   ]);
   
   const [searchQuery, setSearchQuery] = useState('');
-  const [currentView, setCurrentView] = useState<'list' | 'addOptions' | 'form' | 'ehr' | 'consent' | 'match' | 'profile' | 'processing' | 'selectPatient'>('list');
+  const [currentView, setCurrentView] = useState<'list' | 'addOptions' | 'form' | 'ehr' | 'consent' | 'match' | 'profile' | 'processing' | 'selectPatient' | 'quickEntry' | 'docUpload'>('list');
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [consentSent, setConsentSent] = useState(false);
   const [showViewResultsButton, setShowViewResultsButton] = useState(false);
@@ -59,6 +61,14 @@ const FindTrial: React.FC = () => {
 
   const handleEhrOption = () => {
     setCurrentView('ehr');
+  };
+  
+  const handleQuickEntryOption = () => {
+    setCurrentView('quickEntry');
+  };
+  
+  const handleDocUploadOption = () => {
+    setCurrentView('docUpload');
   };
   
   const handlePatientAdded = (patientData: any) => {
@@ -82,13 +92,11 @@ const FindTrial: React.FC = () => {
     } else if (patient.status === 'consented') {
       setCurrentView('profile');
     } else {
-      // If already matched, could show the match results again
       setCurrentView('match');
     }
   };
   
   const handleConsentComplete = (patientId: string) => {
-    // Update patient status to consented
     const updatedPatients = patients.map(patient => 
       patient.id === patientId 
         ? { ...patient, status: 'consented' as const } 
@@ -108,7 +116,6 @@ const FindTrial: React.FC = () => {
   const startTrialMatching = () => {
     setCurrentView('processing');
     
-    // Simulate processing time before showing view results button
     setTimeout(() => {
       setShowViewResultsButton(true);
     }, 5000);
@@ -130,7 +137,6 @@ const FindTrial: React.FC = () => {
   
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
-      {/* Premium Header */}
       <div className="bg-gradient-to-r from-trialos-blue/10 via-trialos-blue/5 to-transparent rounded-xl p-6 border-l-4 border-trialos-blue">
         <div className="inline-block text-xs mb-2 px-3 py-1 bg-trialos-light text-trialos-blue rounded-full font-medium">
           Trial Matching
@@ -142,18 +148,23 @@ const FindTrial: React.FC = () => {
         </p>
         
         {currentView === 'list' && !selectedPatient && (
-          <button
-            onClick={startTrialMatchmaking}
-            className="mt-4 btn-primary rounded-lg px-6 py-3 flex items-center"
-          >
-            <Sparkles size={18} className="mr-2" />
-            <span>Start Trial Matchmaking</span>
-            <ArrowRight size={18} className="ml-2" />
-          </button>
+          <div className="mt-6">
+            <button
+              onClick={startTrialMatchmaking}
+              className="btn-primary rounded-lg px-6 py-3 flex items-center"
+            >
+              <Sparkles size={18} className="mr-2" />
+              <span>Start Trial Matchmaking</span>
+              <ArrowRight size={18} className="ml-2" />
+            </button>
+            
+            <div className="mt-8">
+              <TrialMatchingFlowchart />
+            </div>
+          </div>
         )}
       </div>
       
-      {/* Consent sent notification */}
       {consentSent && (
         <div className="bg-green-50 border-l-4 border-green-400 p-4 rounded-md mb-4">
           <div className="flex">
@@ -184,7 +195,6 @@ const FindTrial: React.FC = () => {
         </div>
       )}
       
-      {/* Main content */}
       <div className="glass-panel rounded-xl p-6 border-t-4 border-trialos-blue shadow-glass">
         {currentView === 'list' && (
           <PatientList 
@@ -217,7 +227,9 @@ const FindTrial: React.FC = () => {
             </button>
             <PatientAddOptions 
               onSelectForm={handleFormOption} 
-              onSelectEhr={handleEhrOption} 
+              onSelectEhr={handleEhrOption}
+              onSelectQuickEntry={handleQuickEntryOption}
+              onSelectDocUpload={handleDocUploadOption}
             />
           </>
         )}
@@ -237,6 +249,36 @@ const FindTrial: React.FC = () => {
           </>
         )}
 
+        {currentView === 'quickEntry' && (
+          <>
+            <button 
+              onClick={() => setCurrentView('addOptions')}
+              className="mb-6 text-gray-500 hover:text-gray-700 flex items-center"
+            >
+              <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Add Options
+            </button>
+            <QuickEntryForm onComplete={handlePatientAdded} />
+          </>
+        )}
+
+        {currentView === 'docUpload' && (
+          <>
+            <button 
+              onClick={() => setCurrentView('addOptions')}
+              className="mb-6 text-gray-500 hover:text-gray-700 flex items-center"
+            >
+              <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Add Options
+            </button>
+            <DocUploadForm onComplete={handlePatientAdded} />
+          </>
+        )}
+        
         {currentView === 'ehr' && (
           <>
             <button 
@@ -304,7 +346,6 @@ const FindTrial: React.FC = () => {
         )}
       </div>
       
-      {/* Premium Feature Highlight */}
       {currentView === 'list' && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
           <div className="premium-card">
