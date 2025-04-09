@@ -141,7 +141,7 @@ const FindTrial: React.FC = () => {
         <div className="inline-block text-xs mb-2 px-3 py-1 bg-trialos-light text-trialos-blue rounded-full font-medium">
           Trial Matching
         </div>
-        <h1 className="text-3xl font-bold headline-gradient">Find the Perfect Trial</h1>
+        <h1 className="text-3xl font-bold headline-gradient">Find the Top Relevant Trials</h1>
         <p className="text-gray-600 mt-2 max-w-2xl">
           Match your patients with suitable clinical trials using our proprietary TrialLM™ 
           technology, powered by advanced AI and real-time eligibility assessment.
@@ -211,6 +211,7 @@ const FindTrial: React.FC = () => {
             patients={patients.filter(p => p.status === 'consented')}
             onSelectPatient={handlePatientSelection}
             onBack={() => setCurrentView('list')}
+            onAddNewPatient={handleAddPatient}
           />
         )}
         

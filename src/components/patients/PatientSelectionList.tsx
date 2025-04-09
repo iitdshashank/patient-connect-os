@@ -1,18 +1,20 @@
 
 import React, { useState } from 'react';
-import { Search, ArrowRight, FileText } from 'lucide-react';
+import { Search, ArrowRight, FileText, UserPlus } from 'lucide-react';
 import { Patient } from './PatientList';
 
 interface PatientSelectionListProps {
   patients: Patient[];
   onSelectPatient: (patient: Patient) => void;
   onBack: () => void;
+  onAddNewPatient: () => void;
 }
 
 const PatientSelectionList: React.FC<PatientSelectionListProps> = ({ 
   patients, 
   onSelectPatient,
-  onBack
+  onBack,
+  onAddNewPatient
 }) => {
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -61,17 +63,27 @@ const PatientSelectionList: React.FC<PatientSelectionListProps> = ({
         </div>
       </div>
       
-      <div className="relative">
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <Search size={18} className="text-gray-400" />
+      <div className="flex justify-between items-center">
+        <div className="relative w-full mr-4">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <Search size={18} className="text-gray-400" />
+          </div>
+          <input
+            type="text"
+            className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-full focus:ring-trialos-blue focus:border-trialos-blue"
+            placeholder="Search patients by name, ID, or diagnosis..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
-        <input
-          type="text"
-          className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-full focus:ring-trialos-blue focus:border-trialos-blue"
-          placeholder="Search patients by name, ID, or diagnosis..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+        
+        <button
+          onClick={onAddNewPatient}
+          className="btn-outline flex items-center text-sm whitespace-nowrap"
+        >
+          <UserPlus size={16} className="mr-1" />
+          Add New Patient
+        </button>
       </div>
       
       <div className="border border-gray-200 rounded-lg overflow-hidden">

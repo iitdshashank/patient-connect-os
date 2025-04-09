@@ -1,35 +1,41 @@
 
 import React from 'react';
-import { Users, UserSearch, FileSearch, Brain, ListChecks, Heart } from 'lucide-react';
+import { Users, UserPlus, FileSearch, Brain, ListChecks, Heart } from 'lucide-react';
 
 const TrialMatchingFlowchart: React.FC = () => {
   const steps = [
     { 
       id: 1, 
-      title: "Select Patient", 
-      icon: <UserSearch size={24} className="text-trialos-blue" />,
-      description: "Choose a consented patient from your list"
+      title: "Add Patient", 
+      icon: <UserPlus size={24} className="text-trialos-blue" />,
+      description: "Add a patient and get their consent"
     },
     { 
       id: 2, 
+      title: "Select Patient", 
+      icon: <Users size={24} className="text-trialos-blue" />,
+      description: "Choose a consented patient from your list"
+    },
+    { 
+      id: 3, 
       title: "Review Data", 
       icon: <FileSearch size={24} className="text-trialos-blue" />,
       description: "Select which clinical data to include"
     },
     { 
-      id: 3, 
+      id: 4, 
       title: "AI Processing", 
       icon: <Brain size={24} className="text-trialos-blue" />,
       description: "Our TrialLM™ analyzes patient data"
     },
     { 
-      id: 4, 
+      id: 5, 
       title: "View Matches", 
       icon: <ListChecks size={24} className="text-trialos-blue" />,
       description: "Review ranked trial matches with scores"
     },
     { 
-      id: 5, 
+      id: 6, 
       title: "Connect", 
       icon: <Heart size={24} className="text-trialos-blue" />,
       description: "Request trial enrollment for your patient"
