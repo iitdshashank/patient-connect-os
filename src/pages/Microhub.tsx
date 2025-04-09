@@ -1,6 +1,18 @@
-
 import React from 'react';
-import { Building2, CheckCircle2, ClipboardList, Calendar, Users, Award, Search, FileText, BadgeCheck, FileCheck } from 'lucide-react';
+import { 
+  Building2, 
+  CheckCircle2, 
+  ClipboardList, 
+  Calendar, 
+  Users, 
+  Award, 
+  Search, 
+  FileText, 
+  BadgeCheck, 
+  FileCheck, 
+  ChevronLeft,
+  ChevronRight
+} from 'lucide-react';
 
 const RegistrationStep: React.FC<{
   title: string;
@@ -133,7 +145,6 @@ const PatientMatchCard: React.FC<{
 };
 
 const Microhub: React.FC = () => {
-  // Mock data
   const isMicrohub = false; // Toggle between registration and microhub dashboard
   const [view, setView] = React.useState<'main' | 'search' | 'matched' | 'registration'>('main');
   
@@ -457,7 +468,6 @@ const Microhub: React.FC = () => {
   
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
-      {/* Header */}
       <div>
         <div className="inline-block text-xs mb-2 px-3 py-1 bg-trialos-light text-trialos-blue rounded-full font-medium">
           Trial Site
@@ -472,12 +482,10 @@ const Microhub: React.FC = () => {
         </p>
       </div>
       
-      {/* Main content */}
       <div className="glass-panel rounded-xl p-6 border-t-4 border-trialos-blue shadow-glass">
         {renderContent()}
       </div>
       
-      {/* Success stories */}
       {view === 'main' && (
         <div>
           <h2 className="text-xl font-semibold text-gray-800 mb-6">Success Stories</h2>
