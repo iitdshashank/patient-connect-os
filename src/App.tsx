@@ -12,6 +12,7 @@ import Referrals from "./pages/Referrals";
 import Microhub from "./pages/Microhub";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import ManageTrials from "./pages/ManageTrials";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,14 @@ const App = () => (
             element={
               <Layout>
                 <Microhub />
+              </Layout>
+            } 
+          />
+          <Route 
+            path="/manage-trials" 
+            element={
+              <Layout>
+                <ManageTrials />
               </Layout>
             } 
           />

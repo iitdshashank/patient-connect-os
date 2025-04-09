@@ -1,43 +1,43 @@
 
 import React from 'react';
-import { Users, UserPlus, FileSearch, Brain, ListChecks, Heart } from 'lucide-react';
+import { UserPlus, Users, FileSearch, Brain, ListChecks, Heart } from 'lucide-react';
 
 const TrialMatchingFlowchart: React.FC = () => {
   const steps = [
     { 
       id: 1, 
       title: "Add Patient", 
-      icon: <UserPlus size={24} className="text-trialos-blue" />,
+      icon: <UserPlus size={24} className="text-white" />,
       description: "Add a patient and get their consent"
     },
     { 
       id: 2, 
       title: "Select Patient", 
-      icon: <Users size={24} className="text-trialos-blue" />,
+      icon: <Users size={24} className="text-white" />,
       description: "Choose a consented patient from your list"
     },
     { 
       id: 3, 
       title: "Review Data", 
-      icon: <FileSearch size={24} className="text-trialos-blue" />,
+      icon: <FileSearch size={24} className="text-white" />,
       description: "Select which clinical data to include"
     },
     { 
       id: 4, 
       title: "AI Processing", 
-      icon: <Brain size={24} className="text-trialos-blue" />,
+      icon: <Brain size={24} className="text-white" />,
       description: "Our TrialLM™ analyzes patient data"
     },
     { 
       id: 5, 
       title: "View Matches", 
-      icon: <ListChecks size={24} className="text-trialos-blue" />,
+      icon: <ListChecks size={24} className="text-white" />,
       description: "Review ranked trial matches with scores"
     },
     { 
       id: 6, 
       title: "Connect", 
-      icon: <Heart size={24} className="text-trialos-blue" />,
+      icon: <Heart size={24} className="text-white" />,
       description: "Request trial enrollment for your patient"
     }
   ];
@@ -50,25 +50,26 @@ const TrialMatchingFlowchart: React.FC = () => {
       </h3>
       
       <div className="relative">
-        {/* Connecting line */}
-        <div className="absolute left-[36px] top-10 bottom-10 w-0.5 bg-gradient-to-b from-trialos-blue via-trialos-teal to-green-400 z-0"></div>
-        
-        {/* Steps */}
-        <div className="relative z-10">
+        {/* Horizontal layout with connecting lines */}
+        <div className="flex flex-col md:flex-row gap-4 relative">
+          {/* Connecting line */}
+          <div className="hidden md:block absolute left-[52px] right-[52px] top-[36px] h-0.5 bg-gradient-to-r from-trialos-blue via-trialos-teal to-green-400 z-0"></div>
+          
+          {/* Steps */}
           {steps.map((step, index) => (
-            <div key={step.id} className="flex items-start mb-6 last:mb-0">
-              <div className="flex-shrink-0 w-[72px] h-[72px] rounded-full flex items-center justify-center bg-white shadow-sm border border-gray-100">
-                <div className={`w-14 h-14 rounded-full ${index === 0 ? 'bg-trialos-blue' : 'bg-gradient-to-br from-trialos-blue to-trialos-teal opacity-80'} text-white flex items-center justify-center`}>
+            <div key={step.id} className="flex-1 flex flex-col items-center relative z-10">
+              <div className="w-[72px] h-[72px] rounded-full flex items-center justify-center bg-white shadow-sm border border-gray-100 mb-3">
+                <div className="w-14 h-14 rounded-full bg-trialos-blue text-white flex items-center justify-center">
                   {step.icon}
                 </div>
               </div>
               
-              <div className="ml-4 pt-3">
-                <h4 className="font-medium text-gray-800 flex items-center">
+              <div className="text-center">
+                <h4 className="font-medium text-gray-800 flex items-center justify-center mb-1">
                   <span className="text-xs bg-trialos-blue/10 text-trialos-blue px-2 py-0.5 rounded-full mr-2">Step {step.id}</span>
                   {step.title}
                 </h4>
-                <p className="text-gray-600 text-sm mt-1">{step.description}</p>
+                <p className="text-gray-600 text-xs md:text-sm">{step.description}</p>
               </div>
             </div>
           ))}

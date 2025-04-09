@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Building2, CheckCircle2, ClipboardList, Calendar, Users, Award } from 'lucide-react';
+import { Building2, CheckCircle2, ClipboardList, Calendar, Users, Award, Search, FileText, BadgeCheck, FileCheck } from 'lucide-react';
 
 const RegistrationStep: React.FC<{
   title: string;
@@ -43,16 +43,16 @@ const TrialCard: React.FC<{
   name: string;
   phase: string;
   sponsor: string;
-  patients: number;
-  status: 'active' | 'recruiting' | 'completed';
+  location: string;
+  status: 'recruiting' | 'active' | 'completed';
   onClick: () => void;
-}> = ({ name, phase, sponsor, patients, status, onClick }) => {
+}> = ({ name, phase, sponsor, location, status, onClick }) => {
   const getStatusBadge = () => {
     switch (status) {
       case 'active':
         return <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-600">Active</span>;
       case 'recruiting':
-        return <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-600">Recruiting</span>;
+        return <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-600">Recruiting Sites</span>;
       case 'completed':
         return <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-600">Completed</span>;
     }
@@ -60,7 +60,7 @@ const TrialCard: React.FC<{
   
   return (
     <div 
-      className="glass-panel rounded-xl p-5 cursor-pointer card-hover"
+      className="glass-panel rounded-xl p-5 cursor-pointer hover:shadow-md transition-all hover:border-trialos-blue/30"
       onClick={onClick}
     >
       <div className="flex justify-between items-start">
@@ -71,26 +71,62 @@ const TrialCard: React.FC<{
         {getStatusBadge()}
       </div>
       
-      <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
-        <div className="flex items-center">
-          <Users size={18} className="text-trialos-blue mr-2" />
-          <span><strong>{patients}</strong> patients</span>
-        </div>
-        <div className="flex items-center">
-          <Calendar size={18} className="text-trialos-blue mr-2" />
-          <span>Next visit: <strong>Jun 12</strong></span>
+      <div className="mt-4 text-sm">
+        <div className="flex items-center text-gray-600">
+          <FileText size={16} className="text-trialos-blue mr-2" />
+          <span>Located in <strong>{location}</strong></span>
         </div>
       </div>
       
       <div className="mt-4 pt-4 border-t border-border flex justify-between">
-        <div className="flex space-x-1">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="w-6 h-6 rounded-full bg-trialos-blue/10 flex items-center justify-center text-xs text-trialos-blue">
-              {i + 1}
-            </div>
-          ))}
+        <div className="text-sm text-gray-500">
+          Site application: <span className="text-green-600 font-medium">Open</span>
         </div>
-        <button className="text-sm text-trialos-blue font-medium">View Trial</button>
+        <button className="text-sm text-trialos-blue font-medium hover:underline">Apply Now</button>
+      </div>
+    </div>
+  );
+};
+
+const PatientMatchCard: React.FC<{
+  patientName: string;
+  patientId: string;
+  diagnosis: string;
+  trials: { name: string; match: number }[];
+  onClick: () => void;
+}> = ({ patientName, patientId, diagnosis, trials, onClick }) => {
+  return (
+    <div 
+      className="glass-panel rounded-xl p-5 cursor-pointer hover:shadow-md transition-all hover:border-trialos-blue/30"
+      onClick={onClick}
+    >
+      <div className="flex justify-between items-start">
+        <div>
+          <h3 className="font-semibold text-gray-800">{patientName}</h3>
+          <p className="text-xs text-gray-500">ID: {patientId}</p>
+          <p className="text-sm text-gray-600 mt-1">Diagnosis: {diagnosis}</p>
+        </div>
+        <div className="px-2 py-1 rounded-full bg-trialos-blue/10 text-trialos-blue text-xs font-medium">
+          Matched Patient
+        </div>
+      </div>
+      
+      <div className="mt-4 space-y-2">
+        <p className="text-sm font-medium text-gray-700">Top Trial Matches:</p>
+        {trials.map((trial, index) => (
+          <div key={index} className="flex items-center justify-between bg-white p-2 rounded-md border border-gray-100">
+            <span className="text-sm">{trial.name}</span>
+            <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700">
+              {trial.match}% Match
+            </span>
+          </div>
+        ))}
+      </div>
+      
+      <div className="mt-4 pt-4 border-t border-border flex justify-end">
+        <button className="text-sm btn-primary rounded-lg px-4 py-1.5">
+          Apply as Trial Site
+        </button>
       </div>
     </div>
   );
@@ -99,6 +135,7 @@ const TrialCard: React.FC<{
 const Microhub: React.FC = () => {
   // Mock data
   const isMicrohub = false; // Toggle between registration and microhub dashboard
+  const [view, setView] = React.useState<'main' | 'search' | 'matched' | 'registration'>('main');
   
   const registrationSteps = [
     {
@@ -118,297 +155,371 @@ const Microhub: React.FC = () => {
     },
     {
       title: "Compliance Documents",
-      description: "Upload required regulatory and compliance documents",
+      description: "Upload required CDSCO and FDA regulatory documents",
       completed: false
     },
     {
       title: "Final Review",
-      description: "Review and submit your microhub application",
+      description: "Review and submit your trial site application",
       completed: false
     }
   ];
   
-  const activeTrials = [
+  const publicTrials = [
     {
       name: "Phase 2 HER2+ Breast Cancer Trial",
       phase: "Phase 2",
-      sponsor: "Memorial Cancer Institute",
-      patients: 8,
-      status: 'active' as const
+      sponsor: "Tata Memorial Hospital",
+      location: "Mumbai, Maharashtra",
+      status: 'recruiting' as const
     },
     {
       name: "Phase 3 NSCLC Immunotherapy Trial",
       phase: "Phase 3",
-      sponsor: "BioGen Pharmaceuticals",
-      patients: 12,
+      sponsor: "Apollo Hospitals",
+      location: "Hyderabad, Telangana",
       status: 'recruiting' as const
     },
     {
-      name: "Phase 1 Multiple Myeloma Trial",
-      phase: "Phase 1",
-      sponsor: "National Research Center",
-      patients: 4,
-      status: 'completed' as const
+      name: "Phase 2 Diabetes Type 2 Study",
+      phase: "Phase 2",
+      sponsor: "AIIMS Research Center",
+      location: "New Delhi, Delhi",
+      status: 'recruiting' as const
     }
   ];
+  
+  const matchedPatients = [
+    {
+      name: "Priya Sharma",
+      id: "PT-12845",
+      diagnosis: "Breast Cancer (HER2+)",
+      trials: [
+        { name: "Phase 2 HER2+ Breast Cancer Trial", match: 92 },
+        { name: "Triple Positive Breast Cancer Study", match: 84 },
+        { name: "Advanced Stage Breast Cancer Trial", match: 76 }
+      ]
+    },
+    {
+      name: "Rajesh Kumar",
+      id: "PT-10592",
+      diagnosis: "NSCLC",
+      trials: [
+        { name: "Phase 3 NSCLC Immunotherapy Trial", match: 89 },
+        { name: "Advanced Lung Cancer Study", match: 82 },
+        { name: "EGFR+ Lung Cancer Trial", match: 77 }
+      ]
+    },
+    {
+      name: "Meera Patel",
+      id: "PT-13501",
+      diagnosis: "Ovarian Cancer",
+      trials: [
+        { name: "Advanced Ovarian Cancer Trial", match: 94 },
+        { name: "Platinum-Resistant Ovarian Cancer Study", match: 86 },
+        { name: "Recurrent Ovarian Cancer Trial", match: 80 }
+      ]
+    }
+  ];
+  
+  const renderContent = () => {
+    switch (view) {
+      case 'search':
+        return (
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-semibold text-gray-800">Public Trials Seeking Sites</h2>
+              <div className="flex items-center space-x-4">
+                <div className="relative">
+                  <input 
+                    type="text" 
+                    placeholder="Search trials..." 
+                    className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-trialos-blue/20 focus:border-trialos-blue"
+                  />
+                  <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                </div>
+                <select className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-trialos-blue/20 focus:border-trialos-blue">
+                  <option>All Phases</option>
+                  <option>Phase 1</option>
+                  <option>Phase 2</option>
+                  <option>Phase 3</option>
+                </select>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {publicTrials.map((trial, index) => (
+                <TrialCard
+                  key={index}
+                  {...trial}
+                  onClick={() => setView('registration')}
+                />
+              ))}
+            </div>
+            
+            <button 
+              onClick={() => setView('main')}
+              className="text-trialos-blue hover:underline flex items-center"
+            >
+              <ChevronLeft size={16} className="mr-1" />
+              Back to Options
+            </button>
+          </div>
+        );
+        
+      case 'matched':
+        return (
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-semibold text-gray-800">Matched Patients</h2>
+              <div className="flex items-center space-x-4">
+                <div className="relative">
+                  <input 
+                    type="text" 
+                    placeholder="Search patients..." 
+                    className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-trialos-blue/20 focus:border-trialos-blue"
+                  />
+                  <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                </div>
+                <select className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-trialos-blue/20 focus:border-trialos-blue">
+                  <option>All Diagnoses</option>
+                  <option>Breast Cancer</option>
+                  <option>Lung Cancer</option>
+                  <option>Ovarian Cancer</option>
+                </select>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {matchedPatients.map((patient, index) => (
+                <PatientMatchCard
+                  key={index}
+                  patientName={patient.name}
+                  patientId={patient.id}
+                  diagnosis={patient.diagnosis}
+                  trials={patient.trials}
+                  onClick={() => setView('registration')}
+                />
+              ))}
+            </div>
+            
+            <button 
+              onClick={() => setView('main')}
+              className="text-trialos-blue hover:underline flex items-center"
+            >
+              <ChevronLeft size={16} className="mr-1" />
+              Back to Options
+            </button>
+          </div>
+        );
+        
+      case 'registration':
+        return (
+          <div className="space-y-6">
+            <button 
+              onClick={() => setView('main')}
+              className="text-trialos-blue hover:underline flex items-center"
+            >
+              <ChevronLeft size={16} className="mr-1" />
+              Back to Options
+            </button>
+            
+            <div className="glass-panel rounded-xl p-6">
+              <div className="flex items-start mb-8">
+                <div className="p-3 rounded-lg bg-trialos-blue/10 text-trialos-blue mr-4">
+                  <Building2 size={24} />
+                </div>
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-800">Trial Site Registration Process</h2>
+                  <p className="text-gray-600 mt-1">
+                    Complete the following steps to register your facility as a decentralized clinical trial site
+                  </p>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                {registrationSteps.map((step, index) => (
+                  <RegistrationStep
+                    key={index}
+                    title={step.title}
+                    description={step.description}
+                    completed={step.completed}
+                    number={index + 1}
+                  />
+                ))}
+              </div>
+              
+              <div className="mt-8 bg-trialos-blue/5 rounded-lg p-5 border border-trialos-blue/20">
+                <div className="flex items-start">
+                  <Award size={24} className="text-trialos-blue mr-4 flex-shrink-0" />
+                  <div>
+                    <h3 className="font-semibold text-gray-800">Benefits of Becoming a Trial Site</h3>
+                    <p className="text-sm text-gray-600 mt-1">
+                      By becoming a decentralized trial site, your facility will gain access to:
+                    </p>
+                    <ul className="mt-3 space-y-2">
+                      {[
+                        "Direct access to innovative clinical trials",
+                        "Additional revenue streams through trial operations",
+                        "Enhanced reputation as a research center",
+                        "Expanded treatment options for your patients",
+                        "Support from TrialOS platform and sponsors"
+                      ].map((benefit, index) => (
+                        <li key={index} className="flex items-start">
+                          <CheckCircle2 size={16} className="text-trialos-blue mr-2 mt-0.5 flex-shrink-0" />
+                          <span className="text-sm text-gray-700">{benefit}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+        
+      default:
+        return (
+          <div className="space-y-8">
+            <h2 className="text-xl font-semibold text-gray-800">Choose Your Path</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div 
+                className="glass-panel rounded-xl p-6 cursor-pointer hover:shadow-md transition-all hover:border-trialos-blue/30"
+                onClick={() => setView('search')}
+              >
+                <div className="p-3 rounded-lg bg-trialos-blue/10 text-trialos-blue mb-4 w-fit">
+                  <Search size={24} />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">Find Public Trials</h3>
+                <p className="text-gray-600 mb-4">
+                  Browse through active clinical trials looking for decentralized trial sites across India
+                </p>
+                <button className="btn-primary rounded-lg px-4 py-2 flex items-center">
+                  <span>Browse Trials</span>
+                  <ChevronRight size={16} className="ml-1" />
+                </button>
+              </div>
+              
+              <div 
+                className="glass-panel rounded-xl p-6 cursor-pointer hover:shadow-md transition-all hover:border-trialos-blue/30"
+                onClick={() => setView('matched')}
+              >
+                <div className="p-3 rounded-lg bg-trialos-teal/10 text-trialos-teal mb-4 w-fit">
+                  <Users size={24} />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">Matched Patients</h3>
+                <p className="text-gray-600 mb-4">
+                  Apply to become a trial site for your patients who matched with clinical trials
+                </p>
+                <button className="btn-primary rounded-lg px-4 py-2 flex items-center">
+                  <span>View Matched Patients</span>
+                  <ChevronRight size={16} className="ml-1" />
+                </button>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+              <div className="glass-panel rounded-xl p-5">
+                <div className="w-10 h-10 rounded-full bg-trialos-blue/10 text-trialos-blue flex items-center justify-center mb-4">
+                  <BadgeCheck size={20} />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">CDSCO Compliance</h3>
+                <p className="text-gray-600 text-sm">
+                  We ensure all trial sites meet Central Drugs Standard Control Organisation requirements for clinical research.
+                </p>
+              </div>
+              
+              <div className="glass-panel rounded-xl p-5">
+                <div className="w-10 h-10 rounded-full bg-trialos-blue/10 text-trialos-blue flex items-center justify-center mb-4">
+                  <FileCheck size={20} />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">Documentation Support</h3>
+                <p className="text-gray-600 text-sm">
+                  Guidance with all necessary regulatory documentation and compliance paperwork for Indian trial sites.
+                </p>
+              </div>
+              
+              <div className="glass-panel rounded-xl p-5">
+                <div className="w-10 h-10 rounded-full bg-trialos-blue/10 text-trialos-blue flex items-center justify-center mb-4">
+                  <Award size={20} />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">Recognized Excellence</h3>
+                <p className="text-gray-600 text-sm">
+                  Gain recognition as a center of excellence for clinical research in the Indian healthcare ecosystem.
+                </p>
+              </div>
+            </div>
+          </div>
+        );
+    }
+  };
   
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
       {/* Header */}
       <div>
         <div className="inline-block text-xs mb-2 px-3 py-1 bg-trialos-light text-trialos-blue rounded-full font-medium">
-          Microhub
+          Trial Site
         </div>
         <h1 className="text-3xl font-bold text-trialos-blue">
-          {isMicrohub ? "Microhub Dashboard" : "Become a Microhub"}
+          {isMicrohub ? "Trial Site Dashboard" : "Become a Trial Site"}
         </h1>
         <p className="text-gray-600 mt-2">
           {isMicrohub 
             ? "Manage your clinical trial operations and enrolled patients" 
-            : "Transform your facility into a decentralized clinical trial microhub"}
+            : "Transform your facility into a decentralized clinical trial site and expand patient access to innovative treatments"}
         </p>
       </div>
       
-      {!isMicrohub ? (
-        <>
-          {/* Registration steps */}
-          <div className="glass-panel rounded-xl p-6">
-            <div className="flex items-start mb-8">
-              <div className="p-3 rounded-lg bg-trialos-blue/10 text-trialos-blue mr-4">
-                <Building2 size={24} />
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold text-gray-800">Registration Process</h2>
-                <p className="text-gray-600 mt-1">
-                  Complete the following steps to register your facility as a clinical trial microhub
-                </p>
-              </div>
-            </div>
-            
-            <div className="space-y-4">
-              {registrationSteps.map((step, index) => (
-                <RegistrationStep
-                  key={index}
-                  title={step.title}
-                  description={step.description}
-                  completed={step.completed}
-                  number={index + 1}
-                />
-              ))}
-            </div>
-            
-            <div className="mt-8 bg-trialos-blue/5 rounded-lg p-5 border border-trialos-blue/20">
-              <div className="flex items-start">
-                <Award size={24} className="text-trialos-blue mr-4 flex-shrink-0" />
-                <div>
-                  <h3 className="font-semibold text-gray-800">Benefits of Becoming a Microhub</h3>
-                  <p className="text-sm text-gray-600 mt-1">
-                    By becoming a microhub, your facility will gain access to:
-                  </p>
-                  <ul className="mt-3 space-y-2">
-                    {[
-                      "Direct access to innovative clinical trials",
-                      "Additional revenue streams through trial operations",
-                      "Enhanced reputation as a research center",
-                      "Expanded treatment options for your patients",
-                      "Support from TrialOS platform and sponsors"
-                    ].map((benefit, index) => (
-                      <li key={index} className="flex items-start">
-                        <CheckCircle2 size={16} className="text-trialos-blue mr-2 mt-0.5 flex-shrink-0" />
-                        <span className="text-sm text-gray-700">{benefit}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Success stories */}
-          <div>
-            <h2 className="text-xl font-semibold text-gray-800 mb-6">Success Stories</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[
-                {
-                  name: "St. Mary's Hospital",
-                  location: "Boston, MA",
-                  trials: 18,
-                  quote: "Becoming a microhub transformed our ability to offer cutting-edge treatments."
-                },
-                {
-                  name: "Westlake Medical Center",
-                  location: "Chicago, IL",
-                  trials: 12,
-                  quote: "The TrialOS platform streamlined our operations and increased our trial capacity."
-                },
-                {
-                  name: "Pacific Heights Clinic",
-                  location: "San Francisco, CA",
-                  trials: 24,
-                  quote: "Our patient satisfaction increased dramatically with access to innovative trials."
-                }
-              ].map((story, index) => (
-                <div key={index} className="glass-panel rounded-xl p-5">
-                  <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-trialos-blue to-trialos-teal flex items-center justify-center text-white font-bold text-xl">
-                      {story.name.charAt(0)}
-                    </div>
-                    <div className="ml-3">
-                      <h3 className="font-semibold text-gray-800">{story.name}</h3>
-                      <p className="text-xs text-gray-500">{story.location}</p>
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-600 italic mb-4">"{story.quote}"</p>
-                  <div className="text-sm text-trialos-blue font-medium">
-                    {story.trials} trials conducted
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </>
-      ) : (
-        <>
-          {/* Microhub Dashboard */}
+      {/* Main content */}
+      <div className="glass-panel rounded-xl p-6 border-t-4 border-trialos-blue shadow-glass">
+        {renderContent()}
+      </div>
+      
+      {/* Success stories */}
+      {view === 'main' && (
+        <div>
+          <h2 className="text-xl font-semibold text-gray-800 mb-6">Success Stories</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
-                title: "Active Trials",
-                value: "3",
-                icon: <ClipboardList size={20} className="text-trialos-blue" />,
-                bgColor: "bg-trialos-blue/10"
+                name: "AIIMS Delhi",
+                location: "New Delhi, India",
+                trials: 18,
+                quote: "Becoming a trial site transformed our ability to offer cutting-edge treatments."
               },
               {
-                title: "Enrolled Patients",
-                value: "24",
-                icon: <Users size={20} className="text-trialos-teal" />,
-                bgColor: "bg-trialos-teal/10"
+                name: "Apollo Hospitals",
+                location: "Chennai, India",
+                trials: 12,
+                quote: "The TrialOS platform streamlined our operations and increased our trial capacity."
               },
               {
-                title: "Upcoming Visits",
-                value: "8",
-                icon: <Calendar size={20} className="text-purple-600" />,
-                bgColor: "bg-purple-100"
+                name: "Medanta Hospital",
+                location: "Gurugram, India",
+                trials: 24,
+                quote: "Our patient satisfaction increased dramatically with access to innovative trials."
               }
-            ].map((stat, index) => (
+            ].map((story, index) => (
               <div key={index} className="glass-panel rounded-xl p-5">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <p className="text-sm text-gray-500">{stat.title}</p>
-                    <h3 className="text-2xl font-bold mt-1 text-gray-800">{stat.value}</h3>
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-trialos-blue to-trialos-teal flex items-center justify-center text-white font-bold text-xl">
+                    {story.name.split(' ')[0].charAt(0)}
                   </div>
-                  <div className={`p-2 rounded-lg ${stat.bgColor}`}>
-                    {stat.icon}
+                  <div className="ml-3">
+                    <h3 className="font-semibold text-gray-800">{story.name}</h3>
+                    <p className="text-xs text-gray-500">{story.location}</p>
                   </div>
+                </div>
+                <p className="text-sm text-gray-600 italic mb-4">"{story.quote}"</p>
+                <div className="text-sm text-trialos-blue font-medium">
+                  {story.trials} trials conducted
                 </div>
               </div>
             ))}
           </div>
-          
-          {/* Active trials */}
-          <div>
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold text-gray-800">Your Trials</h2>
-              <div className="flex space-x-3">
-                <select className="bg-white border border-border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-trialos-blue/20 focus:border-trialos-blue">
-                  <option>All Statuses</option>
-                  <option>Active</option>
-                  <option>Recruiting</option>
-                  <option>Completed</option>
-                </select>
-                <button className="btn-primary rounded-lg px-4 py-2 text-sm">
-                  Calendar View
-                </button>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {activeTrials.map((trial, index) => (
-                <TrialCard
-                  key={index}
-                  {...trial}
-                  onClick={() => console.log(`Clicked on trial: ${trial.name}`)}
-                />
-              ))}
-            </div>
-          </div>
-          
-          {/* Patient timeline */}
-          <div className="glass-panel rounded-xl p-6 border-t-4 border-trialos-teal">
-            <div className="flex items-start mb-6">
-              <div className="p-3 rounded-lg bg-trialos-teal/10 text-trialos-teal mr-4">
-                <Users size={24} />
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold text-gray-800">Patient Timeline</h2>
-                <p className="text-gray-600 mt-1">
-                  Track patient progress and upcoming activities
-                </p>
-              </div>
-            </div>
-            
-            <div className="bg-white/80 rounded-lg p-5 border border-border">
-              <div className="flex justify-between mb-4">
-                <h3 className="font-medium text-trialos-blue">Recent Activities</h3>
-                <button className="text-sm text-trialos-blue font-medium">View All</button>
-              </div>
-              
-              <div className="relative pl-6 border-l-2 border-trialos-blue/20 space-y-8">
-                {[
-                  {
-                    type: "Drug Administration",
-                    patient: "Robert Lee",
-                    trial: "NSCLC Immunotherapy Trial",
-                    date: "May 22, 2023",
-                    time: "10:30 AM",
-                    details: "Administered dose #4 of trial medication",
-                    completed: true
-                  },
-                  {
-                    type: "Lab Results",
-                    patient: "Sarah Johnson",
-                    trial: "HER2+ Breast Cancer Trial",
-                    date: "May 20, 2023",
-                    time: "2:15 PM",
-                    details: "Routine blood work completed, results uploaded",
-                    completed: true
-                  },
-                  {
-                    type: "Patient Visit",
-                    patient: "Michael Chen",
-                    trial: "Multiple Myeloma Trial",
-                    date: "May 18, 2023",
-                    time: "9:00 AM",
-                    details: "Regular check-up and symptom assessment",
-                    completed: true
-                  }
-                ].map((activity, index) => (
-                  <div key={index} className="relative">
-                    <div className="absolute -left-10 w-4 h-4 rounded-full bg-trialos-blue border-4 border-white"></div>
-                    <div className="bg-white rounded-lg p-4 shadow-sm border border-border">
-                      <div className="flex justify-between">
-                        <span className="text-xs px-2 py-1 rounded-full bg-trialos-blue/10 text-trialos-blue">
-                          {activity.type}
-                        </span>
-                        <div className="flex items-center">
-                          <CheckCircle2 size={14} className="text-green-500 mr-1" />
-                          <span className="text-xs text-green-500">Completed</span>
-                        </div>
-                      </div>
-                      <h4 className="font-medium text-gray-800 mt-2">{activity.patient}</h4>
-                      <p className="text-xs text-gray-500">{activity.trial}</p>
-                      <p className="text-sm text-gray-600 mt-2">{activity.details}</p>
-                      <div className="mt-3 text-xs text-gray-400 flex items-center">
-                        <Calendar size={12} className="mr-1" />
-                        <span>{activity.date} at {activity.time}</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </>
+        </div>
       )}
     </div>
   );

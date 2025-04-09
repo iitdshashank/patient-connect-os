@@ -9,7 +9,8 @@ import {
   Building2, 
   Bell, 
   User, 
-  Settings 
+  Settings,
+  Briefcase
 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -62,7 +63,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { path: '/', text: 'Dashboard', icon: <Home size={20} /> },
     { path: '/find-trial', text: 'Find a Trial', icon: <Search size={20} /> },
     { path: '/referrals', text: 'Manage Referrals', icon: <ClipboardList size={20} /> },
-    { path: '/microhub', text: 'Become a Microhub', icon: <Building2 size={20} /> },
+    { path: '/microhub', text: 'Become a Trial Site', icon: <Building2 size={20} /> },
+    { path: '/manage-trials', text: 'Manage Trials', icon: <Briefcase size={20} /> },
     { path: '/settings', text: 'Settings', icon: <Settings size={20} /> },
   ];
 
