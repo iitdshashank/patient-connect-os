@@ -10,7 +10,10 @@ import {
   Bell, 
   User, 
   Settings,
-  Briefcase
+  Briefcase,
+  FileText,
+  Layers,
+  MessageSquare
 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -35,9 +38,9 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
         isCollapsed ? 'justify-center' : 'justify-start'
       } ${
         isActive 
-          ? 'bg-trialos-blue text-white' 
-          : 'text-trialos-blue hover:bg-trialos-light'
-      } rounded-lg p-3 mb-2 cursor-pointer transition-all duration-300`}
+          ? 'sidebar-item-active' 
+          : 'sidebar-item'
+      } mb-1 cursor-pointer`}
       onClick={onClick}
     >
       <div className="flex-shrink-0">{icon}</div>
@@ -60,68 +63,75 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
   
   const sidebarItems = [
-    { path: '/', text: 'Dashboard', icon: <Home size={20} /> },
-    { path: '/find-trial', text: 'Find a Trial', icon: <Search size={20} /> },
-    { path: '/referrals', text: 'Manage Referrals', icon: <ClipboardList size={20} /> },
-    { path: '/microhub', text: 'Become a Trial Site', icon: <Building2 size={20} /> },
-    { path: '/manage-trials', text: 'Manage Trials', icon: <Briefcase size={20} /> },
-    { path: '/settings', text: 'Settings', icon: <Settings size={20} /> },
+    { path: '/', text: 'Dashboard', icon: <Home size={18} /> },
+    { path: '/find-trial', text: 'Find a Trial', icon: <Search size={18} /> },
+    { path: '/referrals', text: 'Manage Referrals', icon: <ClipboardList size={18} /> },
+    { path: '/microhub', text: 'Become a Trial Site', icon: <Building2 size={18} /> },
+    { path: '/manage-trials', text: 'Manage Trials', icon: <Briefcase size={18} /> },
+    { divider: true },
+    { path: '/documents', text: 'Documents', icon: <FileText size={18} /> },
+    { path: '/messages', text: 'Messages', icon: <MessageSquare size={18} /> },
+    { path: '/settings', text: 'Settings', icon: <Settings size={18} /> },
   ];
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden">
+    <div className="flex h-screen bg-trialos-gray-100 overflow-hidden">
       {/* Sidebar */}
       <div 
-        className={`bg-white border-r border-border shadow-soft transition-all duration-300 ease-in-out ${
-          isCollapsed ? 'w-16' : 'w-64'
+        className={`bg-white border-r border-trialos-gray-200 shadow-sm transition-all duration-300 ease-in-out ${
+          isCollapsed ? 'w-16' : 'w-60'
         } flex flex-col justify-between`}
       >
         {/* Logo and toggle */}
-        <div className="p-4">
+        <div className="p-4 border-b border-trialos-gray-200">
           <div className="flex items-center justify-between">
             {!isCollapsed && (
               <div className="flex items-center">
-                <div className="w-8 h-8 rounded-md bg-trialos-blue flex items-center justify-center text-white font-bold">
+                <div className="w-8 h-8 rounded-md bg-trialos-dark flex items-center justify-center text-white font-bold">
                   T
                 </div>
-                <h1 className="ml-2 text-xl font-bold text-trialos-blue">TrialOS</h1>
+                <h1 className="ml-2 text-xl font-bold text-trialos-dark">TrialOS</h1>
               </div>
             )}
             <button
               onClick={() => setIsCollapsed(!isCollapsed)}
-              className="p-1 rounded-full hover:bg-trialos-light text-trialos-blue transition-colors"
+              className="p-1 rounded-full hover:bg-trialos-gray-100 text-trialos-gray-500 transition-colors"
             >
-              {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+              {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
             </button>
           </div>
         </div>
         
         {/* Navigation items */}
-        <div className="flex-grow py-8 px-2 overflow-y-auto">
+        <div className="flex-grow py-4 px-3 overflow-y-auto">
           <nav>
-            {sidebarItems.map((item) => (
-              <SidebarItem
-                key={item.path}
-                icon={item.icon}
-                text={item.text}
-                isActive={location.pathname === item.path}
-                isCollapsed={isCollapsed}
-                onClick={() => navigate(item.path)}
-              />
+            {sidebarItems.map((item, index) => (
+              item.divider ? (
+                <div key={`divider-${index}`} className="my-3 border-t border-trialos-gray-200"></div>
+              ) : (
+                <SidebarItem
+                  key={item.path}
+                  icon={item.icon}
+                  text={item.text}
+                  isActive={location.pathname === item.path}
+                  isCollapsed={isCollapsed}
+                  onClick={() => navigate(item.path)}
+                />
+              )
             ))}
           </nav>
         </div>
         
         {/* User profile */}
-        <div className="p-4 border-t border-border">
+        <div className="p-4 border-t border-trialos-gray-200">
           <div className="flex items-center">
-            <div className="w-8 h-8 rounded-full bg-trialos-blue/10 flex items-center justify-center">
-              <User size={18} className="text-trialos-blue" />
+            <div className="w-8 h-8 rounded-full bg-trialos-gray-200 flex items-center justify-center">
+              <User size={16} className="text-trialos-gray-700" />
             </div>
             {!isCollapsed && (
               <div className="ml-3">
-                <p className="text-sm font-medium">Demo User</p>
-                <p className="text-xs text-muted-foreground">St. Mary's Hospital</p>
+                <p className="text-sm font-medium text-trialos-dark">Dr. Ananya Sharma</p>
+                <p className="text-xs text-trialos-gray-600">AIIMS Delhi</p>
               </div>
             )}
           </div>
@@ -131,24 +141,34 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       {/* Main content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="h-16 bg-white border-b border-border shadow-sm flex items-center justify-between px-6">
-          <h2 className="text-lg font-medium">
-            {sidebarItems.find(item => item.path === location.pathname)?.text || 'Dashboard'}
+        <header className="h-14 bg-white border-b border-trialos-gray-200 shadow-sm flex items-center justify-between px-4">
+          <h2 className="text-base font-medium text-trialos-dark">
+            {sidebarItems.find(item => 'path' in item && item.path === location.pathname)?.text || 'Dashboard'}
           </h2>
           <div className="flex items-center space-x-4">
-            <button className="p-2 rounded-full hover:bg-trialos-light text-trialos-blue transition-colors relative">
-              <Bell size={20} />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-trialos-teal rounded-full"></span>
+            <div className="relative">
+              <input 
+                type="text" 
+                placeholder="Search..." 
+                className="py-1.5 px-3 text-sm border border-trialos-gray-300 rounded-md w-48 focus:outline-none focus:ring-1 focus:ring-trialos-gray-400"
+              />
+              <Search size={16} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-trialos-gray-500" />
+            </div>
+            <button className="p-1.5 rounded-full hover:bg-trialos-gray-100 text-trialos-gray-700 transition-colors relative">
+              <Bell size={18} />
+              <span className="absolute top-0.5 right-0.5 w-2 h-2 bg-red-500 rounded-full"></span>
             </button>
-            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-trialos-blue to-trialos-teal flex items-center justify-center text-white cursor-pointer">
-              D
+            <div className="flex items-center border-l border-trialos-gray-200 ml-2 pl-4">
+              <div className="w-8 h-8 rounded-full bg-trialos-gray-800 flex items-center justify-center text-white text-sm cursor-pointer">
+                AS
+              </div>
             </div>
           </div>
         </header>
         
         {/* Page content */}
-        <main className="flex-1 overflow-auto bg-trialos-neutral/30 p-6">
-          <div className="animate-fade-in">{children}</div>
+        <main className="flex-1 overflow-auto bg-trialos-gray-100 p-4 md:p-6">
+          <div className="animate-fade-in max-w-7xl mx-auto">{children}</div>
         </main>
       </div>
     </div>

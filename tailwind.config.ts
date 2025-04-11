@@ -63,13 +63,29 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// TrialOS specific colors based on Danaher inspiration
+				// Updated color scheme based on the screenshot
 				trialos: {
-					blue: '#0033A0',
-					teal: '#00B5E2',
+					blue: '#0033A0',  // Keep existing color
+					teal: '#00B5E2',  // Keep existing color
 					neutral: '#F5F5F5',
-					dark: '#001F5C',
-					light: '#E6F7FC'
+					dark: '#1A1F2C',  // Updated to darker charcoal color from screenshot
+					light: '#E6F7FC',
+					gray: {
+						100: '#F7F7F8',
+						200: '#EAEAEB',
+						300: '#DDDDE0',
+						400: '#C8C8C9',
+						500: '#9F9EA1',
+						600: '#8A898C',
+						700: '#403E43',
+						800: '#221F26',
+						900: '#1A1F2C',
+					},
+					yellow: {
+						light: '#FFF8E1',
+						DEFAULT: '#FFECB3',
+						dark: '#FFD54F',
+					}
 				}
 			},
 			borderRadius: {
@@ -137,11 +153,11 @@ export default {
 				'pulse-soft': 'pulse-soft 3s ease-in-out infinite'
 			},
 			fontFamily: {
-				sans: ['Inter', 'sans-serif']
+				sans: ['"Inter"', 'sans-serif']
 			},
 			boxShadow: {
-				'soft': '0 4px 20px rgba(0, 0, 0, 0.05)',
-				'glass': '0 8px 32px rgba(0, 51, 160, 0.08)'
+				'soft': '0 2px 10px rgba(0, 0, 0, 0.05)',
+				'glass': '0 4px 16px rgba(0, 0, 0, 0.04)'
 			},
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
