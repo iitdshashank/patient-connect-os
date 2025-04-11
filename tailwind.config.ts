@@ -63,28 +63,24 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Updated color scheme based on the screenshot
-				trialos: {
-					blue: '#0033A0',  // Keep existing color
-					teal: '#00B5E2',  // Keep existing color
-					neutral: '#F5F5F5',
-					dark: '#1A1F2C',  // Updated to darker charcoal color from screenshot
-					light: '#E6F7FC',
+				// Updated color scheme based on Recule brand identity (monochromatic)
+				recule: {
+					black: '#1A1F2C', 
+					dark: '#222222',
 					gray: {
 						100: '#F7F7F8',
 						200: '#EAEAEB',
 						300: '#DDDDE0',
 						400: '#C8C8C9',
-						500: '#9F9EA1',
-						600: '#8A898C',
-						700: '#403E43',
-						800: '#221F26',
+						500: '#8E9196',
+						600: '#aaadb0',
+						700: '#75767A',
+						800: '#3C3C3C',
 						900: '#1A1F2C',
 					},
-					yellow: {
-						light: '#FFF8E1',
-						DEFAULT: '#FFECB3',
-						dark: '#FFD54F',
+					white: {
+						DEFAULT: '#FFFFFF',
+						off: '#F5F5F5',
 					}
 				}
 			},
@@ -153,7 +149,7 @@ export default {
 				'pulse-soft': 'pulse-soft 3s ease-in-out infinite'
 			},
 			fontFamily: {
-				sans: ['"Inter"', 'sans-serif']
+				sans: ['"Work Sans"', 'sans-serif']
 			},
 			boxShadow: {
 				'soft': '0 2px 10px rgba(0, 0, 0, 0.05)',

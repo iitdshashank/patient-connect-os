@@ -22,7 +22,7 @@
 .data-table th {
   text-align: left;
   font-weight: 500;
-  color: #403E43;
+  color: #3C3C3C;
   padding: 10px 16px;
   background-color: #F7F7F8;
   border-bottom: 1px solid #EAEAEB;
@@ -31,7 +31,7 @@
 .data-table td {
   padding: 10px 16px;
   border-bottom: 1px solid #EAEAEB;
-  color: #221F26;
+  color: #1A1F2C;
 }
 
 .data-table tbody tr:hover {
@@ -52,23 +52,23 @@
 }
 
 .status-green {
-  background-color: #10B981;
+  background-color: #3C3C3C;
 }
 
 .status-yellow {
-  background-color: #F59E0B;
+  background-color: #75767A;
 }
 
 .status-blue {
-  background-color: #3B82F6;
+  background-color: #222222;
 }
 
 .status-red {
-  background-color: #EF4444;
+  background-color: #444444;
 }
 
 .status-gray {
-  background-color: #9F9EA1;
+  background-color: #8E9196;
 }
 
 /* Tab system */
@@ -84,7 +84,7 @@
   border-bottom: 2px solid transparent;
   transition: all 0.3s;
   font-size: 14px;
-  color: #8A898C;
+  color: #8E9196;
 }
 
 .tab.active {
@@ -94,7 +94,7 @@
 }
 
 .tab:hover:not(.active) {
-  color: #403E43;
+  color: #3C3C3C;
   background-color: #F7F7F8;
 }
 
@@ -116,14 +116,14 @@
 }
 
 .info-card-content {
-  color: #403E43;
+  color: #3C3C3C;
   font-size: 14px;
 }
 
-/* Yellow notification card like in the screenshot */
+/* Notification card in monochrome */
 .notification-card {
-  background-color: #FFF8E1;
-  border: 1px solid #FFECB3;
+  background-color: #F5F5F5;
+  border: 1px solid #EAEAEB;
   border-radius: 6px;
   padding: 16px;
   margin-bottom: 16px;
@@ -137,11 +137,11 @@
 }
 
 .notification-card-content {
-  color: #403E43;
+  color: #3C3C3C;
   font-size: 14px;
 }
 
-/* Form elements styled like the screenshot */
+/* Form elements styled like the Recule brand */
 .form-input {
   border: 1px solid #DDDDE0;
   border-radius: 6px;
@@ -153,7 +153,7 @@
 
 .form-input:focus {
   outline: none;
-  border-color: #8A898C;
+  border-color: #8E9196;
   box-shadow: 0 0 0 2px rgba(138, 137, 140, 0.1);
 }
 
@@ -162,7 +162,7 @@
   margin-bottom: 6px;
   font-size: 14px;
   font-weight: 500;
-  color: #403E43;
+  color: #3C3C3C;
 }
 
 .form-select {
@@ -174,13 +174,13 @@
   background-color: white;
   transition: all 0.2s;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238A898C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238E9196' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
 }
 
 .form-select:focus {
   outline: none;
-  border-color: #8A898C;
+  border-color: #8E9196;
   box-shadow: 0 0 0 2px rgba(138, 137, 140, 0.1);
 }

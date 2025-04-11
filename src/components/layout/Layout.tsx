@@ -75,27 +75,27 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   ];
 
   return (
-    <div className="flex h-screen bg-trialos-gray-100 overflow-hidden">
+    <div className="flex h-screen bg-recule-gray-100 overflow-hidden">
       {/* Sidebar */}
       <div 
-        className={`bg-white border-r border-trialos-gray-200 shadow-sm transition-all duration-300 ease-in-out ${
+        className={`bg-white border-r border-recule-gray-200 shadow-sm transition-all duration-300 ease-in-out ${
           isCollapsed ? 'w-16' : 'w-60'
         } flex flex-col justify-between`}
       >
         {/* Logo and toggle */}
-        <div className="p-4 border-b border-trialos-gray-200">
+        <div className="p-4 border-b border-recule-gray-200">
           <div className="flex items-center justify-between">
             {!isCollapsed && (
               <div className="flex items-center">
-                <div className="w-8 h-8 rounded-md bg-trialos-dark flex items-center justify-center text-white font-bold">
+                <div className="w-8 h-8 rounded-md bg-recule-black flex items-center justify-center text-white font-bold">
                   T
                 </div>
-                <h1 className="ml-2 text-xl font-bold text-trialos-dark">TrialOS</h1>
+                <h1 className="ml-2 text-xl font-bold text-recule-black">TrialOS</h1>
               </div>
             )}
             <button
               onClick={() => setIsCollapsed(!isCollapsed)}
-              className="p-1 rounded-full hover:bg-trialos-gray-100 text-trialos-gray-500 transition-colors"
+              className="p-1 rounded-full hover:bg-recule-gray-100 text-recule-gray-500 transition-colors"
             >
               {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
             </button>
@@ -107,7 +107,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <nav>
             {sidebarItems.map((item, index) => (
               item.divider ? (
-                <div key={`divider-${index}`} className="my-3 border-t border-trialos-gray-200"></div>
+                <div key={`divider-${index}`} className="my-3 border-t border-recule-gray-200"></div>
               ) : (
                 <SidebarItem
                   key={item.path}
@@ -123,15 +123,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </div>
         
         {/* User profile */}
-        <div className="p-4 border-t border-trialos-gray-200">
+        <div className="p-4 border-t border-recule-gray-200">
           <div className="flex items-center">
-            <div className="w-8 h-8 rounded-full bg-trialos-gray-200 flex items-center justify-center">
-              <User size={16} className="text-trialos-gray-700" />
+            <div className="w-8 h-8 rounded-full bg-recule-gray-200 flex items-center justify-center">
+              <User size={16} className="text-recule-gray-700" />
             </div>
             {!isCollapsed && (
               <div className="ml-3">
-                <p className="text-sm font-medium text-trialos-dark">Dr. Ananya Sharma</p>
-                <p className="text-xs text-trialos-gray-600">AIIMS Delhi</p>
+                <p className="text-sm font-medium text-recule-black">Dr. Ananya Sharma</p>
+                <p className="text-xs text-recule-gray-600">AIIMS Delhi</p>
               </div>
             )}
           </div>
@@ -141,8 +141,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       {/* Main content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="h-14 bg-white border-b border-trialos-gray-200 shadow-sm flex items-center justify-between px-4">
-          <h2 className="text-base font-medium text-trialos-dark">
+        <header className="h-14 bg-white border-b border-recule-gray-200 shadow-sm flex items-center justify-between px-4">
+          <h2 className="text-base font-medium text-recule-black">
             {sidebarItems.find(item => 'path' in item && item.path === location.pathname)?.text || 'Dashboard'}
           </h2>
           <div className="flex items-center space-x-4">
@@ -150,16 +150,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <input 
                 type="text" 
                 placeholder="Search..." 
-                className="py-1.5 px-3 text-sm border border-trialos-gray-300 rounded-md w-48 focus:outline-none focus:ring-1 focus:ring-trialos-gray-400"
+                className="py-1.5 px-3 text-sm border border-recule-gray-300 rounded-md w-48 focus:outline-none focus:ring-1 focus:ring-recule-gray-400"
               />
-              <Search size={16} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-trialos-gray-500" />
+              <Search size={16} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-recule-gray-500" />
             </div>
-            <button className="p-1.5 rounded-full hover:bg-trialos-gray-100 text-trialos-gray-700 transition-colors relative">
+            <button className="p-1.5 rounded-full hover:bg-recule-gray-100 text-recule-gray-700 transition-colors relative">
               <Bell size={18} />
-              <span className="absolute top-0.5 right-0.5 w-2 h-2 bg-red-500 rounded-full"></span>
+              <span className="absolute top-0.5 right-0.5 w-2 h-2 bg-recule-black rounded-full"></span>
             </button>
-            <div className="flex items-center border-l border-trialos-gray-200 ml-2 pl-4">
-              <div className="w-8 h-8 rounded-full bg-trialos-gray-800 flex items-center justify-center text-white text-sm cursor-pointer">
+            <div className="flex items-center border-l border-recule-gray-200 ml-2 pl-4">
+              <div className="w-8 h-8 rounded-full bg-recule-gray-800 flex items-center justify-center text-white text-sm cursor-pointer">
                 AS
               </div>
             </div>
@@ -167,7 +167,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </header>
         
         {/* Page content */}
-        <main className="flex-1 overflow-auto bg-trialos-gray-100 p-4 md:p-6">
+        <main className="flex-1 overflow-auto bg-recule-gray-100 p-4 md:p-6">
           <div className="animate-fade-in max-w-7xl mx-auto">{children}</div>
         </main>
       </div>
