@@ -1,42 +1,186 @@
+
 #root {
+  margin: 0 auto;
+  text-align: center;
+  height: 100%;
+  width: 100%;
+}
+
+.page-container {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  padding: 0 1rem;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* Modern table styles */
+.data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.data-table th {
+  text-align: left;
+  font-weight: 500;
+  color: #3C3C3C;
+  padding: 10px 16px;
+  background-color: #F7F7F8;
+  border-bottom: 1px solid #EAEAEB;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.data-table td {
+  padding: 10px 16px;
+  border-bottom: 1px solid #EAEAEB;
+  color: #1A1F2C;
 }
 
-.card {
-  padding: 2em;
+.data-table tbody tr:hover {
+  background-color: #F7F7F8;
 }
 
-.read-the-docs {
-  color: #888;
+.data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Status indicators */
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.status-green {
+  background-color: #3C3C3C;
+}
+
+.status-yellow {
+  background-color: #75767A;
+}
+
+.status-blue {
+  background-color: #222222;
+}
+
+.status-red {
+  background-color: #444444;
+}
+
+.status-gray {
+  background-color: #8E9196;
+}
+
+/* Tab system */
+.tab-container {
+  display: flex;
+  border-bottom: 1px solid #EAEAEB;
+  margin-bottom: 16px;
+}
+
+.tab {
+  padding: 8px 16px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s;
+  font-size: 14px;
+  color: #8E9196;
+}
+
+.tab.active {
+  border-bottom-color: #1A1F2C;
+  color: #1A1F2C;
+  font-weight: 500;
+}
+
+.tab:hover:not(.active) {
+  color: #3C3C3C;
+  background-color: #F7F7F8;
+}
+
+/* Card designs */
+.info-card {
+  background-color: white;
+  border: 1px solid #EAEAEB;
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.info-card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1A1F2C;
+  margin-bottom: 8px;
+}
+
+.info-card-content {
+  color: #3C3C3C;
+  font-size: 14px;
+}
+
+/* Notification card in monochrome */
+.notification-card {
+  background-color: #F5F5F5;
+  border: 1px solid #EAEAEB;
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.notification-card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1A1F2C;
+  margin-bottom: 8px;
+}
+
+.notification-card-content {
+  color: #3C3C3C;
+  font-size: 14px;
+}
+
+/* Form elements styled like the Recule brand */
+.form-input {
+  border: 1px solid #DDDDE0;
+  border-radius: 6px;
+  padding: 8px 12px;
+  width: 100%;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #8E9196;
+  box-shadow: 0 0 0 2px rgba(138, 137, 140, 0.1);
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #3C3C3C;
+}
+
+.form-select {
+  border: 1px solid #DDDDE0;
+  border-radius: 6px;
+  padding: 8px 12px;
+  width: 100%;
+  font-size: 14px;
+  background-color: white;
+  transition: all 0.2s;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238E9196' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: #8E9196;
+  box-shadow: 0 0 0 2px rgba(138, 137, 140, 0.1);
 }
