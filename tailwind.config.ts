@@ -63,25 +63,13 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Updated color scheme based on Recule brand identity (monochromatic)
-				recule: {
-					black: '#1A1F2C', 
-					dark: '#222222',
-					gray: {
-						100: '#F7F7F8',
-						200: '#EAEAEB',
-						300: '#DDDDE0',
-						400: '#C8C8C9',
-						500: '#8E9196',
-						600: '#aaadb0',
-						700: '#75767A',
-						800: '#3C3C3C',
-						900: '#1A1F2C',
-					},
-					white: {
-						DEFAULT: '#FFFFFF',
-						off: '#F5F5F5',
-					}
+				// TrialOS specific colors based on Danaher inspiration
+				trialos: {
+					blue: '#0033A0',
+					teal: '#00B5E2',
+					neutral: '#F5F5F5',
+					dark: '#001F5C',
+					light: '#E6F7FC'
 				}
 			},
 			borderRadius: {
@@ -149,11 +137,11 @@ export default {
 				'pulse-soft': 'pulse-soft 3s ease-in-out infinite'
 			},
 			fontFamily: {
-				sans: ['"Work Sans"', 'sans-serif']
+				sans: ['Inter', 'sans-serif']
 			},
 			boxShadow: {
-				'soft': '0 2px 10px rgba(0, 0, 0, 0.05)',
-				'glass': '0 4px 16px rgba(0, 0, 0, 0.04)'
+				'soft': '0 4px 20px rgba(0, 0, 0, 0.05)',
+				'glass': '0 8px 32px rgba(0, 51, 160, 0.08)'
 			},
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
